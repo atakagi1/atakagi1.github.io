@@ -75,7 +75,7 @@ function handleMotion(event) {
   updateFieldIfNotNull('Accelerometer_i', event.interval, 2);
   incrementEventCount();
 
-  time = Counter + event.interval;
+  time = Date.now()-StartTime;
   csv += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
   document.getElementById("test").innerHTML = csv;
 }
@@ -107,7 +107,7 @@ demo_button.onclick = function(e) {
     demo_button.classList.remove('btn-success');
     demo_button.classList.add('btn-danger');
     is_running = true;
-    Counter = 0;
+    StartTime = Date.now();
   }
 };
 
