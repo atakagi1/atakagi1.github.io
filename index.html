@@ -107,6 +107,11 @@ function start_recording() {
     is_running = true;
     // Store start recording time
     StartTime = Date.now();
+
+    // Play metronome
+    var audio = new Audio('tick.mp3');
+    audio.loop = false;
+    audio.play(); 
   }
 };
 
