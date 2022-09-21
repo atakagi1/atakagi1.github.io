@@ -18,15 +18,11 @@
 
 <div class="p-3 mb-2 bg-secondary" id="demo-div">
 <a id="start_demo" class="button" href="#" role="button">Start the demo</a>
+
+<a href="data:text/csv;charset=utf-8,'+escape(csv)+'" download="filename.csv">download</a>
+
+
 <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
-
-
-<h4 style="margin-top:0.75rem;">Orientation</h4>
-<ul>
-  <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
-  <li>Y-axis (&gamma;): <span id="Orientation_g">0</span><span>&deg;</span></li>
-  <li>Z-axis (&alpha;): <span id="Orientation_a">0</span><span>&deg;</span></li>
-</ul>
 
 <h4>Accelerometer</h4>
 <ul>
@@ -36,32 +32,46 @@
   <li>Data Interval: <span id="Accelerometer_i">0</span><span> ms</span></li>
 </ul>
 
-<h4>Accelerometer including gravity</h4>
-
-<ul>
-  <li>X-axis: <span id="Accelerometer_gx">0</span><span> m/s<sup>2</sup></span></li>
-  <li>Y-axis: <span id="Accelerometer_gy">0</span><span> m/s<sup>2</sup></span></li>
-  <li>Z-axis: <span id="Accelerometer_gz">0</span><span> m/s<sup>2</sup></span></li>
-</ul>
-
-<h4>Gyroscope</h4>
-<ul>
-  <li>X-axis: <span id="Gyroscope_x">0</span><span>&deg;/s</span></li>
-  <li>Y-axis: <span id="Gyroscope_y">0</span><span>&deg;/s</span></li>
-  <li>Z-axis: <span id="Gyroscope_z">0</span><span>&deg;/s</span></li>
-</ul>
-
 </div>
 </main>
 
 <script>
 
-function handleOrientation(event) {
-  updateFieldIfNotNull('Orientation_a', event.alpha);
-  updateFieldIfNotNull('Orientation_b', event.beta);
-  updateFieldIfNotNull('Orientation_g', event.gamma);
-  incrementEventCount();
+function saveCSV () {
+  // (A) ARRAY OF DATA
+  var array = [
+    ["Job", "job@doe.com", "123456"],
+    ["Joe", "joe@doe.com", "234567"],
+    ["Joi", "joi@doe.com", "345678"],
+    ["Jon", "jon@doe.com", "456789"],
+    ["Jou", "jou@doe.com", "987654"],
+    ["Joy", "joy@doe.com", "876543"],
+  ];
+ 
+  // (B) ARRAY TO CSV STRING
+  var csv = "";
+  for (let row of array) {
+    for (let col of row) { csv += col + ","; }
+    csv += "\r\n";
+  }
+ 
+  // (C) CREATE BLOB OBJECT
+  var myBlob = new Blob([csv], {type: "text/csv"});
+ 
+  // (D) CREATE DOWNLOAD LINK
+  var url = window.URL.createObjectURL(myBlob);
+  var anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "demo.csv";
+ 
+  // (E) "FORCE DOWNLOAD"
+  // NOTE: MAY NOT ALWAYS WORK DUE TO BROWSER SECURITY
+  // BETTER TO LET USERS CLICK ON THEIR OWN
+  anchor.click();
+  window.URL.revokeObjectURL(url);
+  anchor.remove();
 }
+
 
 function incrementEventCount(){
   let counterElement = document.getElementById("num-observed-events")
@@ -75,9 +85,6 @@ function updateFieldIfNotNull(fieldName, value, precision=10){
 }
 
 function handleMotion(event) {
-  updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
-  updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
-  updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
 
   updateFieldIfNotNull('Accelerometer_x', event.acceleration.x);
   updateFieldIfNotNull('Accelerometer_y', event.acceleration.y);
@@ -85,9 +92,6 @@ function handleMotion(event) {
 
   updateFieldIfNotNull('Accelerometer_i', event.interval, 2);
 
-  updateFieldIfNotNull('Gyroscope_z', event.rotationRate.alpha);
-  updateFieldIfNotNull('Gyroscope_x', event.rotationRate.beta);
-  updateFieldIfNotNull('Gyroscope_y', event.rotationRate.gamma);
   incrementEventCount();
 }
 
@@ -105,15 +109,15 @@ demo_button.onclick = function(e) {
   }
   
   if (is_running){
+    // Stop
     window.removeEventListener("devicemotion", handleMotion);
-    window.removeEventListener("deviceorientation", handleOrientation);
     demo_button.innerHTML = "Start demo";
     demo_button.classList.add('btn-success');
     demo_button.classList.remove('btn-danger');
     is_running = false;
   }else{
+    // Start recording
     window.addEventListener("devicemotion", handleMotion);
-    window.addEventListener("deviceorientation", handleOrientation);
     document.getElementById("start_demo").innerHTML = "Stop demo";
     demo_button.classList.remove('btn-success');
     demo_button.classList.add('btn-danger');
@@ -121,24 +125,6 @@ demo_button.onclick = function(e) {
   }
 };
 
-/*
-Light and proximity are not supported anymore by mainstream browsers.
-window.addEventListener('devicelight', function(e) {
-   document.getElementById("DeviceLight").innerHTML="AmbientLight current Value: "+e.value+" Max: "+e.max+" Min: "+e.min;
-});
-
-window.addEventListener('lightlevel', function(e) {
-   document.getElementById("Lightlevel").innerHTML="Light level: "+e.value;
-});
-
-window.addEventListener('deviceproximity', function(e) {
-   document.getElementById("DeviceProximity").innerHTML="DeviceProximity current Value: "+e.value+" Max: "+e.max+" Min: "+e.min;
-});
-
-window.addEventListener('userproximity', function(event) {
-   document.getElementById("UserProximity").innerHTML="UserProximity: "+event.near;
-});
-*/
 
 </script>
 </body>
