@@ -77,6 +77,13 @@ function handleMotion(event) {
 
   // Time of measurement with respect to start of recording
   time = Date.now()-StartTime;
+
+  // Stop recording after 15 seconds
+  if (time>1000) {
+    audio.pause();
+    is_running = false;
+  }
+
   // Append to csv file
   csv += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
   
