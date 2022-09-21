@@ -81,8 +81,6 @@ function handleMotion(event) {
   csv += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
   
   // For debugging
-  document.getElementById("accelx").innerHTML = event.acceleration.x;
-
   document.getElementById("test").innerHTML = csv;
 }
 
