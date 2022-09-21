@@ -17,8 +17,8 @@
 <main role="main" class="container">
 
 <div class="p-3 mb-2 bg-secondary" id="demo-div">
-<a id="start_demo" class="button" href="#" role="button">Start the demo</a>
 
+<button onclick="start_recording()" id="demo_button"> Start Recording </button>  
 <button onclick="download_csv_file()"> Download CSV </button>  
 
 
@@ -85,9 +85,8 @@ function handleMotion(event) {
 }
 
 let is_running = false;
-let demo_button = document.getElementById("start_demo");
-demo_button.onclick = function(e) {
-  e.preventDefault();
+//let demo_button = document.getElementById("start_demo");
+function start_recording() {
   
   // Request permission for iOS 13+ devices
   if (
@@ -100,16 +99,11 @@ demo_button.onclick = function(e) {
   if (is_running){
     // Stop
     window.removeEventListener("devicemotion", handleMotion);
-    demo_button.innerHTML = "Start demo";
-    demo_button.classList.add('btn-success');
-    demo_button.classList.remove('btn-danger');
+
     is_running = false;
   }else{
     // Start recording
     window.addEventListener("devicemotion", handleMotion);
-    document.getElementById("start_demo").innerHTML = "Stop demo";
-    demo_button.classList.remove('btn-success');
-    demo_button.classList.add('btn-danger');
     is_running = true;
     // Store start recording time
     StartTime = Date.now();
