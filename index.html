@@ -1,49 +1,104 @@
 
 <!doctype html>
-<html lang="en">
-  <head>
+<html>
+
+<head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <style>
-      #demo-div {color: lightgrey; border-radius: 0.3rem;}
-      #demo-div span, #demo-div #num-observed-events {color: black;}
-      h1 {margin-top: 0.5rem;}
-      h4 {margin-top: 0.66rem; font-size:1.33rem;}
-      #demo-div li {line-height: 21px;}
-      #demo-div ul {margin-bottom: 0.66rem;}
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel=”stylesheet” type=”text/css” href=”style.css”>
+
+    <style>
+        .row {
+          display: flex;
+        }
+        
+        /* Create two equal columns that sits next to each other */
+        .column {
+          flex: 20%;
+          padding: 5px;
+        
+        }
+        </style>
 </head>
-<body>
-<main role="main" class="container">
-
-<div class="p-3 mb-2 bg-secondary" id="demo-div">
-
-    <div class="slidecontainer">
-        <input type="range" min="-2" max="2" value="0" class="slider" id="myRange">
-      </div>
+<body onload="update_language('en')">
+<main>
 
 
-<button onclick="start_recording()" id="demo_button"> Start Recording 1 second</button>  
-<button onclick="download_csv_file()"> Download CSV </button>  
-
-
-<p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
-
-<h4>Accelerometer</h4>
-<ul>
-  <li>X-axis: <span id="Accelerometer_x">0</span><span> m/s<sup>2</sup></span></li>
-  <li>Y-axis: <span id="Accelerometer_y">0</span><span> m/s<sup>2</sup></span></li>
-  <li>Z-axis: <span id="Accelerometer_z">0</span><span> m/s<sup>2</sup></span></li>
-  <li>Data Interval: <span id="Accelerometer_i">0</span><span> ms</span></li>
-</ul>
-
-<span id="test"></span>
-
+<div class="row">
+    <div class="column" style="text-align: center;">
+        <span id="writing"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="myRange">
+        </div>
+    </div>
 </div>
+<div class="row">
+    <div class="column" style="text-align: center;">
+        <span id="drawing"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="myRange">
+        </div>
+    </div>
+</div>
+
+
+
+<div style="text-align: center;">
+    
+
+
+
+    <button onclick="start_recording()" id="demo_button"> Start Recording 1 second</button>  
+    <button onclick="download_csv_file()"> Download CSV </button>  
+
+
+    <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
+
+    <h4>Accelerometer</h4>
+    <ul>
+    <li>X-axis: <span id="Accelerometer_x">0</span><span> m/s<sup>2</sup></span></li>
+    <li>Y-axis: <span id="Accelerometer_y">0</span><span> m/s<sup>2</sup></span></li>
+    <li>Z-axis: <span id="Accelerometer_z">0</span><span> m/s<sup>2</sup></span></li>
+    <li>Data Interval: <span id="Accelerometer_i">0</span><span> ms</span></li>
+    </ul>
+
+    <button onclick="update_language('en')"> English </button> 
+    <button onclick="update_language('jp')"> Japanese </button> 
+
+    <span id="test"></span>
+</div>
+
 </main>
 
 <script>
+
+// English dictionary
+var lang_en = {
+    writing: "Writing",
+    drawing: "Drawing",
+}
+// Japanese dictionary
+var lang_jp = {
+    writing: "字を書く",
+    drawing: "絵を描く",
+}
+
+function update_language(language) {
+    if (language=='en'){
+        lang = lang_en;
+    }
+    else if (language=='jp'){
+        lang = lang_jp;
+    }
+    // Replace all text
+    document.getElementById("writing").innerHTML = lang.writing;
+    document.getElementById("drawing").innerHTML = lang.drawing;
+}
 
 var csv;
 var Counter;
@@ -129,6 +184,69 @@ function start_recording() {
   }
 };
 
+var strings = new Object();
+var lang = 'en';
+if(lang=='fa'){/////////////////////////////Persian////////////////////////////////////////////////////
+
+
+strings["Contents"]                              = "فهرست";
+strings["Index"]                                 = "شاخص";
+strings["Search"]                                = "جستجو";
+strings["Bookmark"]                              = "ذخیره";
+
+strings["Loading the data for search..."]        = "در حال جسنجوی متن...";
+strings["Type in the word(s) to search for:"]    = "لغت مد نظر خود را اینجا تایپ کنید:";
+strings["Search title only"]                     = "جستجو بر اساس عنوان";
+strings["Search previous results"]               = "جستجو در نتایج قبلی";
+strings["Display"]                               = "نمایش";
+strings["No topics found!"]                      = "موردی یافت نشد!";
+
+strings["Type in the keyword to find:"]          = "کلیدواژه برای یافتن تایپ کنید";
+
+strings["Show all"]                              = "نمایش همه";
+strings["Hide all"]                              = "پنهان کردن";
+strings["Previous"]                              = "قبلی";
+strings["Next"]                                  = "بعدی";
+
+strings["Loading table of contents..."]          = "در حال بارگزاری جدول فهرست...";
+
+strings["Topics:"]                               = "عنوان ها";
+strings["Current topic:"]                        = "عنوان جاری:";
+strings["Remove"]                                = "پاک کردن";
+strings["Add"]                                   = "افزودن";
+
+}else{//////////////////////////////////////English///////////////////////////////////////////////////
+
+strings["Contents"]                              = "Contents";
+strings["Index"]                                 = "Index";
+strings["Search"]                                = "Search";
+strings["Bookmark"]                              = "Bookmark";
+
+strings["Loading the data for search..."]        = "Loading the data for search...";
+strings["Type in the word(s) to search for:"]    = "Type in the word(s) to search for:";
+strings["Search title only"]                     = "Search title only";
+strings["Search previous results"]               = "Search previous results";
+strings["Display"]                               = "Display";
+strings["No topics found!"]                      = "No topics found!";
+
+strings["Type in the keyword to find:"]          = "Type in the keyword to find:";
+
+strings["Show all"]                              = "Show all";
+strings["Hide all"]                              = "Hide all";
+strings["Previous"]                              = "Previous";
+strings["Next"]                                  = "Next";
+
+strings["Loading table of contents..."]          = "Loading table of contents...";
+
+strings["Topics:"]                               = "Topics:";
+strings["Current topic:"]                        = "Current topic:";
+strings["Remove"]                                = "Remove";
+strings["Add"]                                   = "Add";
+
+}
+
+
 </script>
+
 </body>
 </html>
