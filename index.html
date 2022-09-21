@@ -60,42 +60,6 @@
 
 <script>
 
-function saveCSV () {
-  // (A) ARRAY OF DATA
-  var array = [
-    ["Job", "job@doe.com", "123456"],
-    ["Joe", "joe@doe.com", "234567"],
-    ["Joi", "joi@doe.com", "345678"],
-    ["Jon", "jon@doe.com", "456789"],
-    ["Jou", "jou@doe.com", "987654"],
-    ["Joy", "joy@doe.com", "876543"],
-  ];
- 
-  // (B) ARRAY TO CSV STRING
-  var csv = "";
-  for (let row of array) {
-    for (let col of row) { csv += col + ","; }
-    csv += "\r\n";
-  }
- 
-  // (C) CREATE BLOB OBJECT
-  var myBlob = new Blob([csv], {type: "text/csv"});
- 
-  // (D) CREATE DOWNLOAD LINK
-  var url = window.URL.createObjectURL(myBlob);
-  var anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = "demo.csv";
- 
-  // (E) "FORCE DOWNLOAD"
-  // NOTE: MAY NOT ALWAYS WORK DUE TO BROWSER SECURITY
-  // BETTER TO LET USERS CLICK ON THEIR OWN
-  anchor.click();
-  window.URL.revokeObjectURL(url);
-  anchor.remove();
-}
-
-
 function handleOrientation(event) {
   updateFieldIfNotNull('Orientation_a', event.alpha);
   updateFieldIfNotNull('Orientation_b', event.beta);
@@ -124,7 +88,10 @@ function handleMotion(event) {
   updateFieldIfNotNull('Accelerometer_z', event.acceleration.z);
 
   updateFieldIfNotNull('Accelerometer_i', event.interval, 2);
-  
+
+  updateFieldIfNotNull('Gyroscope_z', event.rotationRate.alpha);
+  updateFieldIfNotNull('Gyroscope_x', event.rotationRate.beta);
+  updateFieldIfNotNull('Gyroscope_y', event.rotationRate.gamma);
   incrementEventCount();
 }
 
@@ -142,7 +109,6 @@ demo_button.onclick = function(e) {
   }
   
   if (is_running){
-    // Stop
     window.removeEventListener("devicemotion", handleMotion);
     window.removeEventListener("deviceorientation", handleOrientation);
     demo_button.innerHTML = "Start demo";
@@ -150,7 +116,6 @@ demo_button.onclick = function(e) {
     demo_button.classList.remove('btn-danger');
     is_running = false;
   }else{
-    // Start recording
     window.addEventListener("devicemotion", handleMotion);
     window.addEventListener("deviceorientation", handleOrientation);
     document.getElementById("start_demo").innerHTML = "Stop demo";
