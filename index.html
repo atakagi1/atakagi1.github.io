@@ -19,7 +19,7 @@
 <div class="p-3 mb-2 bg-secondary" id="demo-div">
 <a id="start_demo" class="button" href="#" role="button">Start the demo</a>
 
-<a href="data:text/csv;charset=utf-8,'+escape(csv)+'" download="filename.csv">download</a>
+<button onclick="download_csv_file()"> Download CSV </button>  
 
 
 <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
@@ -40,6 +40,21 @@
 <script>
 
 var csv;
+var Counter;
+var time;
+
+
+
+function download_csv_file() {  
+    
+  var hiddenElement = document.createElement('a');  
+  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);  
+  hiddenElement.target = '_blank';  
+    
+  //provide the name for the CSV file to be downloaded  
+  hiddenElement.download = 'data.csv';  
+  hiddenElement.click();  
+}  
 
 
 function incrementEventCount(){
@@ -60,7 +75,8 @@ function handleMotion(event) {
   updateFieldIfNotNull('Accelerometer_i', event.interval, 2);
   incrementEventCount();
 
-  csv += event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+  time = Counter + event.interval;
+  csv += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
   document.getElementById("test").innerHTML = csv;
 }
 
@@ -91,6 +107,7 @@ demo_button.onclick = function(e) {
     demo_button.classList.remove('btn-success');
     demo_button.classList.add('btn-danger');
     is_running = true;
+    Counter = 0;
   }
 };
 
