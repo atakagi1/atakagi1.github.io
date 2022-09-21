@@ -32,7 +32,10 @@
   <li>Data Interval: <span id="Accelerometer_i">0</span><span> ms</span></li>
 </ul>
 
-<span id="test"></span>
+Accelx: <span id="accelx"></span>
+
+<!--<span id="test"></span>
+-->
 
 </div>
 </main>
@@ -75,8 +78,14 @@ function handleMotion(event) {
   updateFieldIfNotNull('Accelerometer_i', event.interval, 2);
   incrementEventCount();
 
+  // Time of measurement with respect to start of recording
   time = Date.now()-StartTime;
+  // Append to csv file
   csv += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+  
+  // For debugging
+  document.getElementById("accelx").innerHTML = event.acceleration.x;
+
   document.getElementById("test").innerHTML = csv;
 }
 
@@ -107,6 +116,7 @@ demo_button.onclick = function(e) {
     demo_button.classList.remove('btn-success');
     demo_button.classList.add('btn-danger');
     is_running = true;
+    // Store start recording time
     StartTime = Date.now();
   }
 };
