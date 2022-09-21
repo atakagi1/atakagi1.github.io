@@ -12,11 +12,17 @@
       #demo-div li {line-height: 21px;}
       #demo-div ul {margin-bottom: 0.66rem;}
     </style>
+    <link rel=”stylesheet” type=”text/css” href=”style.css”>
 </head>
 <body>
 <main role="main" class="container">
 
 <div class="p-3 mb-2 bg-secondary" id="demo-div">
+
+    <div class="slidecontainer">
+        <input type="range" min="-2" max="2" value="0" class="slider" id="myRange">
+      </div>
+
 
 <button onclick="start_recording()" id="demo_button"> Start Recording 1 second</button>  
 <button onclick="download_csv_file()"> Download CSV </button>  
@@ -42,7 +48,7 @@
 var csv;
 var Counter;
 var time;
-
+var audio;
 
 
 function download_csv_file() {  
@@ -81,6 +87,7 @@ function handleMotion(event) {
   // Stop recording after 15 seconds
   if (time>1000) {
     audio.pause();
+    window.removeEventListener("devicemotion", handleMotion);
     is_running = false;
   }
 
@@ -116,7 +123,7 @@ function start_recording() {
     StartTime = Date.now();
 
     // Play metronome
-    var audio = new Audio('tick.mp3');
+    audio = new Audio('tick.mp3');
     audio.loop = false;
     audio.play(); 
   }
