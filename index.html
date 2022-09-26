@@ -1,12 +1,11 @@
 
 <!doctype html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel=”stylesheet” type=”text/css” href=”style.css”>
+    <script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
 
     <style>
         .row {
@@ -17,44 +16,76 @@
         .column {
           flex: 20%;
           padding: 5px;
-        
+        }
+
+        .spanstyle {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 17px;
         }
         </style>
+    <script src="moment.js"></script>
+    <!--<script src="papaparse.js"></script>-->
+    <!--<script src="papaparse.min.js"></script>-->
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="distance_metric_obfuscated.js"></script>
 </head>
 <body onload="update_language('en')">
 <main>
 
 
-<div class="row">
-    <div class="column" style="text-align: center;">
-        <span id="writing"></span>
-    </div>
-    <div class="column" style="text-align: center;">
-        <div class="slidecontainer">
-            <input type="range" min="-2" max="2" value="0" class="slider" id="myRange">
-        </div>
-    </div>
+    Debug: <span id="test"></span>
+
+    <input type="file" id="file" name="file">
+
+    <div id="plotdiv" style="width:300px; height: 300px" style="text-align: center;"></div>
+
+<!-- Skill Examiner logo -->
+<div style="text-align: center;"><img width="200" height="150" src="handed_icon.png"></div>
+<br>
+<!-- How to measure -->
+<div style="text-align: center;">
+    <!-- Face phone upwards -->
+    <span id="welcome" class="spanstyle"></span>
+    <br><br>
+    <span class="spanstyle">1. </span><span id="upwards" class="spanstyle"></span>
+    <br>
+    <img width="200" src="phone_orientation.png">
+
+    <!-- Draw circles -->
+    <br><br>
+    <span class="spanstyle">2. </span><span id="outwards" class="spanstyle"></span>
+    <br>
+    <img width="200" src="circular_motion.png">
+
+    <!-- One circle per tick -->
+    <br><br>
+    <span class="spanstyle">3. </span><span id="ticking" class="spanstyle"></span>
+    <br>
+    <img width="200" src="rotate_speed.png">
+
+    <!-- Example video -->
+    <br><br>
+    <span id="examplevideo" class="spanstyle" style="font-size: 23px;"></span>
+    <br>
+    <video width="320" controls><source src="skill_examiner_example.mp4" type="video/mp4"></video>
+    <br><br>
+
+    <!-- Start measuring! -->
+    <span id="startmeasuring" class="spanstyle" style="font-size: 23px; font-weight: bold;"></span>
 </div>
+
+<!-- Record buttons -->
 <div class="row">
-    <div class="column" style="text-align: center;">
-        <span id="drawing"></span>
-    </div>
-    <div class="column" style="text-align: center;">
-        <div class="slidecontainer">
-            <input type="range" min="-2" max="2" value="0" class="slider" id="myRange">
-        </div>
-    </div>
+    <div class="column" style="text-align: center;"><input type="image" src="lefthand.png" id="startLeft" name="submit" width="80" height="110" onclick="start_recording('left')"/></div>
+    <div class="column" style="text-align: center;"><input type="image" src="righthand.png" id="startRight" name="submit" width="80" height="110" onclick="start_recording('right')"/></div>
 </div>
 
 
 
 <div style="text-align: center;">
     
-
-
-
-    <button onclick="start_recording()" id="demo_button"> Start Recording 1 second</button>  
-    <button onclick="download_csv_file()"> Download CSV </button>  
+    <button onclick="download_files('left')"> Save Left Data </button> 
+    <button onclick="download_files('right')"> Save Right Data </button>  
 
 
     <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
@@ -70,22 +101,208 @@
     <button onclick="update_language('en')"> English </button> 
     <button onclick="update_language('jp')"> Japanese </button> 
 
-    <span id="test"></span>
+    
+</div>
+
+
+
+
+
+<!-- Age -->
+<span id="age" class="spanstyle"></span>:<select id="age">
+<option value="n/a">...</option>
+<option value="3-9">3-9</option>
+<option value="10-19">10-19</option>
+<option value="20-29">20-29</option>
+<option value="30-39">30-39</option>
+<option value="40-49">40-49</option>
+<option value="50-59">50-59</option>
+<option value="60+">60+</option>
+</select>
+&emsp;&emsp;
+<!-- Sex -->
+<span id="sex" class="spanstyle"></span>:<select name="sex">
+    <option value="n/a">...</option>
+    <option value="male">M</option>
+    <option value="female">F</option>
+    </select>
+
+<!-- Edinburgh -->
+<div class="row">
+    <div class="column" style="text-align: center;"></div>
+    <div class="column" style="text-align: center;">
+        <span id="left" class="spanstyle">Left</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<span id="right" class="spanstyle">Right</span>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="writing" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="writingRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="drawing" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="drawingRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="throwing" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="throwingRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="scissors" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="scissorsRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="toothbrush" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="toothbrushRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="knife" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="knifeRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="spoon" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="spoonRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="broom" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="broomRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="match" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="matchRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="openingbox" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="openingboxRange">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column" style="text-align: right;">
+        <span id="kicking" class="spanstyle"></span>
+    </div>
+    <div class="column" style="text-align: center;">
+        <div class="slidecontainer">
+            <input type="range" min="-2" max="2" value="0" class="slider" id="kickingRange">
+        </div>
+    </div>
 </div>
 
 </main>
 
 <script>
 
+var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
+//document.getElementById("test").innerHTML = subjectDate;
+
 // English dictionary
 var lang_en = {
+    welcome: "Use a smartphone to measure your skill! For best results:",
+    upwards: "Face phone upwards",
+    outwards: "Rotate OUTWARDS drawing circles 10 cm wide (size of fist)",
+    ticking: "Complete one circle per tick",
+    examplevideo: "Example:",
+    startmeasuring: "Start measuring!",
     writing: "Writing",
     drawing: "Drawing",
+    throwing: "Throwing",
+    scissors: "Scissors",
+    toothbrush: "Toothbrush",
+    knife: "Knife (without fork)",
+    spoon: "Spoon",
+    broom: "Broom (upper hand)",
+    match: "Striking match (match)",
+    openingbox: "Opening box (lid)",
+    kicking: "Kicking ball",
+    left: "Left",
+    right: "Right",
+    male: "M",
+    female: "F",
+    age: "Age",
+    sex: "Sex"
 }
 // Japanese dictionary
 var lang_jp = {
+    welcome: "繰り返し運動で手のスキルを評価します。正しく計測するには",
+    upwards: "携帯の画面が上に向くように持ち",
+    outwards: "外回りに回す。円の大きさは10cm(拳１個分程度)",
+    ticking: "音が鳴るので、１回の音に対し一周回す",
+    examplevideo: "見本:",
+    startmeasuring: "Start measuring!",
     writing: "字を書く",
     drawing: "絵を描く",
+    throwing: "ボールを投げる",
+    scissors: "ハサミ",
+    toothbrush: "歯ブラシ",
+    knife: "ナイフ(フォーク無し)",
+    spoon: "スプーン",
+    broom: "ホウキを持つ上の手",
+    match: "マッチを擦る",
+    openingbox: "引き出しを引く",
+    kicking: "ボールを蹴る足",
+    left: "左",
+    right: "右",
+    male: "男",
+    female: "女",
+    age: "年齢",
+    sex: "性"
 }
 
 function update_language(language) {
@@ -96,25 +313,81 @@ function update_language(language) {
         lang = lang_jp;
     }
     // Replace all text
+    document.getElementById("welcome").innerHTML = lang.welcome;
+    document.getElementById("upwards").innerHTML = lang.upwards;
+    document.getElementById("outwards").innerHTML = lang.outwards;
+    document.getElementById("ticking").innerHTML = lang.ticking;
+    document.getElementById("examplevideo").innerHTML = lang.examplevideo;
+    document.getElementById("startmeasuring").innerHTML = lang.startmeasuring;
     document.getElementById("writing").innerHTML = lang.writing;
     document.getElementById("drawing").innerHTML = lang.drawing;
+    document.getElementById("throwing").innerHTML = lang.throwing;
+    document.getElementById("scissors").innerHTML = lang.scissors;
+    document.getElementById("toothbrush").innerHTML = lang.toothbrush;
+    document.getElementById("knife").innerHTML = lang.knife;
+    document.getElementById("spoon").innerHTML = lang.spoon;
+    document.getElementById("broom").innerHTML = lang.broom;
+    document.getElementById("match").innerHTML = lang.match;
+    document.getElementById("openingbox").innerHTML = lang.openingbox;
+    document.getElementById("kicking").innerHTML = lang.kicking;
+    document.getElementById("left").innerHTML = lang.left;
+    document.getElementById("right").innerHTML = lang.right;
+    document.getElementById("age").innerHTML = lang.age;
+    document.getElementById("sex").innerHTML = lang.sex;
 }
 
-var csv;
+var csvleft;
+var csvright;
 var Counter;
 var time;
 var audio;
+var recordingHand;
 
+function download_files(file) {  
+    document.getElementById("test").innerHTML = csvleft;
 
-function download_csv_file() {  
+    var temp_link = document.createElement('a');
+    if (file=='left'){
+        CSVFile = new Blob([csvleft], {type:"text/csv"});
+        temp_link.download = subjectDate+"left.csv";
+    }
+    else if (file=='right'){
+        CSVFile = new Blob([csvright], {type:"text/csv"});
+        temp_link.download = subjectDate+"right.csv";
+    }
+   // Create CSV file object and feed our
+    // csv_data into it
     
-  var hiddenElement = document.createElement('a');  
-  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);  
-  hiddenElement.target = '_blank';  
+    temp_link.href = window.URL.createObjectURL(CSVFile);
+    temp_link.style.display = "none";
+    document.body.appendChild(temp_link);
+    temp_link.click();
+    document.body.removeChild(temp_link);
+
     
+  /*
+  // Save participant info (Edinburgh, demographics, etc)
+  info = "writing,"+document.getElementById("writingRange").value+"\n"+
+         "drawing,"+document.getElementById("drawingRange").value+"\n"+
+         "throwing,"+document.getElementById("throwingRange").value+"\n"+
+         "scissors,"+document.getElementById("scissorsRange").value+"\n"+
+         "toothbrush,"+document.getElementById("toothbrushRange").value+"\n"+
+         "knife (without fork),"+document.getElementById("knifeRange").value+"\n"+
+         "spoon,"+document.getElementById("spoonRange").value+"\n"+
+         "broom (upper hand),"+document.getElementById("broomRange").value+"\n"+
+         "striking match (match),"+document.getElementById("matchRange").value+"\n"+
+         "opening box (lid),"+document.getElementById("openingboxRange").value+"\n";
+
+  document.getElementById("test").innerHTML = info;
+  */
+  /*
+  var infocsv = document.createElement('b');  
+  infocsv.href = 'data:text/csv;charset=utf-8,' + encodeURI(info);  
+  infocsv.target = '_blank';  
   //provide the name for the CSV file to be downloaded  
-  hiddenElement.download = 'data.csv';  
-  hiddenElement.click();  
+  infocsv.download = 'edinburgh.csv';  
+  infocsv.click(); 
+  */
 }  
 
 
@@ -129,6 +402,9 @@ function updateFieldIfNotNull(fieldName, value, precision=10){
     document.getElementById(fieldName).innerHTML = value.toFixed(precision);
 }
 
+var left_ax = [];
+var left_ay = [];
+var left_az = [];
 function handleMotion(event) {
   updateFieldIfNotNull('Accelerometer_x', event.acceleration.x);
   updateFieldIfNotNull('Accelerometer_y', event.acceleration.y);
@@ -139,24 +415,59 @@ function handleMotion(event) {
   // Time of measurement with respect to start of recording
   time = Date.now()-StartTime;
 
+  // Clear arrays in case of re-recording
+  left_ax.length = 0;
+  left_ay.length = 0;
+  left_az.length = 0;
+  right_ax.length = 0;
+  right_ay.length = 0;
+  right_az.length = 0;
+
   // Stop recording after 15 seconds
   if (time>1000) {
     audio.pause();
-    window.removeEventListener("devicemotion", handleMotion);
     is_running = false;
+
+    // Update image to recording done
+    if (recordingHand=='left'){
+        document.getElementById("startLeft").src="lefthand_done.png";
+    }
+    else if (recordingHand=='right'){
+        document.getElementById("startRight").src="righthanddone.png";
+    }
+
+    // Stop accelerometer
+    window.removeEventListener("devicemotion", handleMotion);
+    
   }
 
-  // Append to csv file
-  csv += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
   
+    
+  // Store acceleration data into arrays after 1.5 seconds
+  if (time>1500){
+    // Append to csv file
+    if (recordingHand=='left'){
+        left_ax.push(event.acceleration.x);
+        left_ay.push(event.acceleration.y);
+        left_az.push(event.acceleration.z);
+        csvleft += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+    }
+    else if (recordingHand=='right'){
+        right_ax.push(event.acceleration.x);
+        right_ay.push(event.acceleration.y);
+        right_az.push(event.acceleration.z);
+        csvright += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+    }
+  }
   // For debugging
-  document.getElementById("test").innerHTML = csv;
+  //document.getElementById("test").innerHTML = csv;
 }
 
 let is_running = false;
-//let demo_button = document.getElementById("start_demo");
-function start_recording() {
-  
+function start_recording(hand) {
+  // Which hand is recording?
+  recordingHand = hand;
+
   // Request permission for iOS 13+ devices
   if (
     DeviceMotionEvent &&
@@ -183,67 +494,325 @@ function start_recording() {
     audio.play(); 
   }
 };
+/*
+var Offset = [0,0,0];
+var Scale = 1;
+function hausdorff_distance(ax,ay,az) {
+    // Calculate accelerometer offset
+    Offset = [calculateMean(ax),calculateMean(ay),calculateMean(az)];
+    var MinSeparation = 60;
+    // Calculate scaling value
+    Scale = calculateScale(ax,ay,az);
+    var FrechetCounter = 0;
+    var FrechetLeft = [];
+    var LeftCyclex1 = [];
+    var LeftCycley1 = [];
+    var LeftCyclez1 = [];
+    var LeftCyclex2 = [];
+    var LeftCycley2 = [];
+    var LeftCyclez2 = [];
+    var LeftCyclex3 = [];
+    var LeftCycley3 = [];
+    var LeftCyclez3 = [];
+    var LeftCyclex4 = [];
+    var LeftCycley4 = [];
+    var LeftCyclez4 = [];
+    var FirstBiCyclex = [];
+    var FirstBiCycley = [];
+    var FirstBiCyclez = [];
+    var SecondBiCyclex = [];
+    var SecondBiCycley = [];
+    var SecondBiCyclez = [];
+    var ElevationStore = [];
+    var Savedx = [];
+    var Savedy = [];
+    var Savedz = [];
 
-var strings = new Object();
-var lang = 'en';
-if(lang=='fa'){/////////////////////////////Persian////////////////////////////////////////////////////
+    for (let i = 0; i < ax.length; i++) {
+        // Offset and scaled accelerometer readings
+        var xAccel = (ax[i]-Offset[0])/Scale;
+        var yAccel = (ay[i]-Offset[1])/Scale;
+        var zAccel = (az[i]-Offset[2])/Scale;
+
+        // Add data to most recent cycle
+        LeftCyclex4.push(xAccel);
+        LeftCycley4.push(yAccel);
+        LeftCyclez4.push(zAccel);
+
+        // Phase
+        var Angle = Math.atan2(yAccel, xAccel);
+        // Elevation
+        ElevationStore.push(Math.atan2(zAccel,Math.sqrt(Math.pow(xAccel,2) + Math.pow(yAccel,2))));
+
+        if (ElevationStore.length==MinSeparation*2) {
+            // If stored Elevation is larger than 2xMinSeparation, delete first value
+            ElevationStore.shift();
+
+            var ElevationStoreMax = ElevationStore.reduce((a, b) => Math.max(a, b), -Infinity);
+            if (ElevationStoreMax==ElevationStore[MinSeparation - 1]){
+                // Max, so beginning of new cycle
+                var PeakInd = LeftCyclex4.length-MinSeparation;
+
+                for (let j=PeakInd; j<PeakInd+MinSeparation; j++){
+                    // Shave off last MinSeparation values (which belong to next cycle)
+                    // and move to next cycle data
+                    Savedx.push(LeftCyclex4[j]);
+                    Savedy.push(LeftCycley4[j]);
+                    Savedz.push(LeftCyclez4[j]);
+                }
+                for (let j=PeakInd; j<PeakInd+MinSeparation; j++){
+                    // Remove last MinSeparation values from current cycle data as it belongs to next cycle
+                    LeftCyclex4.splice(PeakInd,1);
+                    LeftCycley4.splice(PeakInd,1);
+                    LeftCyclez4.splice(PeakInd,1);
+                }
+
+                if (LeftCyclex1.length>0) {
+
+                    // Ignore first incomplete cycle
+                    if (FrechetCounter>0){
+                        // Compare Frechet distance between first and next 2 cycles
+                        FirstBiCyclex.length = 0;
+                        Array.prototype.push.apply(FirstBiCyclex, LeftCyclex1);
+                        Array.prototype.push.apply(FirstBiCyclex, LeftCyclex2);
+                        FirstBiCycley.length = 0;
+                        Array.prototype.push.apply(FirstBiCycley, LeftCycley1);
+                        Array.prototype.push.apply(FirstBiCycley, LeftCycley2);
+                        FirstBiCyclez.length = 0;
+                        Array.prototype.push.apply(FirstBiCyclez, LeftCyclez1);
+                        Array.prototype.push.apply(FirstBiCyclez, LeftCyclez2);
+
+                        SecondBiCyclex.length = 0;
+                        Array.prototype.push.apply(SecondBiCyclex, LeftCyclex3);
+                        Array.prototype.push.apply(SecondBiCyclex, LeftCyclex4);
+                        SecondBiCycley.length = 0;
+                        Array.prototype.push.apply(SecondBiCycley, LeftCycley3);
+                        Array.prototype.push.apply(SecondBiCycley, LeftCycley4);
+                        SecondBiCyclez.length = 0;
+                        Array.prototype.push.apply(SecondBiCyclez, LeftCyclez3);
+                        Array.prototype.push.apply(SecondBiCyclez, LeftCyclez4);
+
+                        // Calculate Hausdorff distance
+                        FrechetLeft.push(getHausdorffDistance(FirstBiCyclex, FirstBiCycley, FirstBiCyclez, SecondBiCyclex, SecondBiCycley, SecondBiCyclez));
+
+                    }
+                    FrechetCounter++;
+                }
+
+                LeftCyclex1.length = 0;
+                Array.prototype.push.apply(LeftCyclex1, LeftCyclex2);
+                LeftCycley1.length = 0;
+                Array.prototype.push.apply(LeftCycley1, LeftCycley2);
+                LeftCyclez1.length = 0;
+                Array.prototype.push.apply(LeftCyclez1, LeftCyclez2);
+                LeftCyclex2.length = 0;
+                Array.prototype.push.apply(LeftCyclex2, LeftCyclex3);
+                LeftCycley2.length = 0;
+                Array.prototype.push.apply(LeftCycley2, LeftCycley3);
+                LeftCyclez2.length = 0;
+                Array.prototype.push.apply(LeftCyclez2, LeftCyclez3);
+                LeftCyclex3.length = 0;
+                Array.prototype.push.apply(LeftCyclex3, LeftCyclex4);
+                LeftCycley3.length = 0;
+                Array.prototype.push.apply(LeftCycley3, LeftCycley4);
+                LeftCyclez3.length = 0;
+                Array.prototype.push.apply(LeftCyclez3, LeftCyclez4);
+                LeftCyclex4.length = 0;
+                Array.prototype.push.apply(LeftCyclex4, Savedx);
+                LeftCycley4.length = 0;
+                Array.prototype.push.apply(LeftCycley4, Savedy);
+                LeftCyclez4.length = 0;
+                Array.prototype.push.apply(LeftCyclez4, Savedz);
+                Savedx.length = 0;
+                Savedy.length = 0;
+                Savedz.length = 0;
+            }
 
 
-strings["Contents"]                              = "فهرست";
-strings["Index"]                                 = "شاخص";
-strings["Search"]                                = "جستجو";
-strings["Bookmark"]                              = "ذخیره";
+        }
 
-strings["Loading the data for search..."]        = "در حال جسنجوی متن...";
-strings["Type in the word(s) to search for:"]    = "لغت مد نظر خود را اینجا تایپ کنید:";
-strings["Search title only"]                     = "جستجو بر اساس عنوان";
-strings["Search previous results"]               = "جستجو در نتایج قبلی";
-strings["Display"]                               = "نمایش";
-strings["No topics found!"]                      = "موردی یافت نشد!";
-
-strings["Type in the keyword to find:"]          = "کلیدواژه برای یافتن تایپ کنید";
-
-strings["Show all"]                              = "نمایش همه";
-strings["Hide all"]                              = "پنهان کردن";
-strings["Previous"]                              = "قبلی";
-strings["Next"]                                  = "بعدی";
-
-strings["Loading table of contents..."]          = "در حال بارگزاری جدول فهرست...";
-
-strings["Topics:"]                               = "عنوان ها";
-strings["Current topic:"]                        = "عنوان جاری:";
-strings["Remove"]                                = "پاک کردن";
-strings["Add"]                                   = "افزودن";
-
-}else{//////////////////////////////////////English///////////////////////////////////////////////////
-
-strings["Contents"]                              = "Contents";
-strings["Index"]                                 = "Index";
-strings["Search"]                                = "Search";
-strings["Bookmark"]                              = "Bookmark";
-
-strings["Loading the data for search..."]        = "Loading the data for search...";
-strings["Type in the word(s) to search for:"]    = "Type in the word(s) to search for:";
-strings["Search title only"]                     = "Search title only";
-strings["Search previous results"]               = "Search previous results";
-strings["Display"]                               = "Display";
-strings["No topics found!"]                      = "No topics found!";
-
-strings["Type in the keyword to find:"]          = "Type in the keyword to find:";
-
-strings["Show all"]                              = "Show all";
-strings["Hide all"]                              = "Hide all";
-strings["Previous"]                              = "Previous";
-strings["Next"]                                  = "Next";
-
-strings["Loading table of contents..."]          = "Loading table of contents...";
-
-strings["Topics:"]                               = "Topics:";
-strings["Current topic:"]                        = "Current topic:";
-strings["Remove"]                                = "Remove";
-strings["Add"]                                   = "Add";
+    }
 
 }
+*/
+
+
+var file = document.getElementById('file');
+file.addEventListener('change', function() {
+    var reader = new FileReader();
+    var f = file.files[0];
+    reader.onload = function(e) {
+        var CSVARRAY = parseResult(e.target.result); //this is where the csv array will be
+    };
+    reader.readAsText(f);    
+});
+
+// Calculate mean offset of accelerometer data
+function calculateMean(array) {
+    var total = 0;
+    var count = 0;
+
+    array.forEach(function(item, index) {
+        total += item;
+        count++;
+    });
+
+    return total/count;
+}
+
+// Scale accelerometer data
+function calculateScale(x,y,z) {
+    var total = 0;
+    var count = 0;
+
+    for (let i = 0; i < x.length; i++) {
+        total += Math.sqrt(Math.pow(x[i]-Offset[0],2)+Math.pow(y[i]-Offset[1],2)+Math.pow(z[i]-Offset[2],2));
+        count++;
+    }
+
+    return total/count;
+}
+
+var timedata = [];
+var xdata = [];
+var ydata = [];
+var zdata = [];
+function parseResult(result) {
+    var resultArray = [];
+    result.split("\n").forEach(function(row) {
+        var rowArray = [];
+        row.split(",").forEach(function(cell) {
+            rowArray.push(cell);
+        });
+        resultArray.push(rowArray);
+
+        if (rowArray[0]>1500){
+            timedata.push(parseFloat(rowArray[0]));
+            xdata.push(parseFloat(rowArray[1]));
+            ydata.push(parseFloat(rowArray[2]));
+            zdata.push(parseFloat(rowArray[3]));
+        }
+        
+    });
+
+    let LeftVar = hausdorff_distance(xdata,ydata,zdata);
+
+    document.getElementById("test").innerHTML = LeftVar;
+
+    plotData(resampleArray(xdata),resampleArray(ydata),resampleArray(xdata)+1,resampleArray(ydata));
+    
+}
+
+function resampleArray(array) {
+    return array.filter(function(value, index, Arr) {
+        return index % Math.round(array.length/200) == 0;
+    });
+}
+
+/*
+function getHausdorffDistance(tempx1, tempy1, tempz1, tempx2, tempy2, tempz2) {
+
+    var x1 = [];
+    var y1 = [];
+    var z1 = [];
+    var x2 = [];
+    var y2 = [];
+    var z2 = [];
+
+    if (tempx1.length<tempx2.length) {
+        x1 = tempx2;
+        y1 = tempy2;
+        z1 = tempz2;
+        x2 = tempx1;
+        y2 = tempy1;
+        z2 = tempz1;
+    }
+    else {
+        x1 = tempx1;
+        y1 = tempy1;
+        z1 = tempz1;
+        x2 = tempx2;
+        y2 = tempy2;
+        z2 = tempz2;
+    }
+
+    // Temporary variables
+    var tempdist = new Array(x1.length);
+    var tempdist2 = new Array(x2.length);
+    var Distance = 0;
+
+    for (let i=0; i<x1.length; i++){
+        var mintempdist2 = 10000;
+        for (let j=0; j<x2.length; j++){
+            // Euclidean distance in 3 dimensions
+            tempdist2[j] = Math.sqrt(Math.pow(x1[i]-x2[j],2)+Math.pow(y1[i]-y2[j],2)+Math.pow(z1[i]-z2[j],2));
+            // Get minimum distance between current point and other curve
+            if (tempdist2[j] < mintempdist2) {
+                mintempdist2 = tempdist2[j];
+            }
+        }
+
+        tempdist[i] = mintempdist2;
+        // Get maximum distance of all points along current curve
+        if (tempdist[i] > Distance) {
+            Distance = tempdist[i];
+        }
+    }
+
+    return Distance;
+}
+*/
+
+function plotData(x1,y1,x2,y2) {
+    var trace1 = {
+    x: x1,
+    y: y1,
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+        color: 'rgb(255, 0, 0)',
+        size: 5,
+    },
+    };
+
+    var trace2 = {
+    x: x2,
+    y: y2,
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+        color: 'rgb(0, 0, 255)',
+        size: 5,
+    },
+    };
+
+    var data = [trace1, trace2];
+
+    var layout = {
+        showlegend: false,
+        xaxis: {
+            autorange: true,
+            showgrid: false,
+            zeroline: false,
+            showline: false,
+            autotick: true,
+            ticks: '',
+            showticklabels: false
+        },
+        yaxis: {
+            autorange: true,
+            showgrid: false,
+            zeroline: false,
+            showline: false,
+            autotick: true,
+            ticks: '',
+            showticklabels: false
+        }
+    };
+
+    Plotly.newPlot(document.getElementById('plotdiv'), data, layout);
+}
+
 
 
 </script>
