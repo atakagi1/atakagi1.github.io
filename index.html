@@ -277,7 +277,8 @@
 
 <script>
 
-const RecordTime = 3000;
+// Standard is 15 seconds
+const RecordTime = 15000;
 
 // Get subject name and date for file storage
 var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
@@ -711,7 +712,7 @@ function plotData(x1,y1,x2,y2) {
         }
     };
 
-    Plotly.newPlot(document.getElementById('plotdiv'), data, layout);
+    Plotly.newPlot(document.getElementById('plotdiv'), data, layout, {staticPlot: true});
 }
 
 function block_screen() {
