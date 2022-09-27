@@ -524,8 +524,8 @@ function handleMotion(event) {
 
         // Show scores
         document.getElementById("scorediv").style.display="";
-        document.getElementById("leftscore").innerHTML = (1-calculateMean(LeftVariability).toFixed(3))*100;
-        document.getElementById("rightscore").innerHTML = (1-calculateMean(RightVariability).toFixed(3))*100;
+        document.getElementById("leftscore").innerHTML = (1-calculateMean(LeftVariability).toFixed(3))*100+"%";
+        document.getElementById("rightscore").innerHTML = (1-calculateMean(RightVariability).toFixed(3))*100+"%";
     }
 
     // Unblock screen
