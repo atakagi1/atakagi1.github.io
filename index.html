@@ -406,11 +406,11 @@ function download_files(file) {
     var temp_link = document.createElement('a');
     if (file=='left'){
         CSVFile = new Blob([csvleft], {type:"text/csv"});
-        temp_link.download = subjectDate+"left.csv";
+        temp_link.download = subjectDate+"lefthand.csv";
     }
     else if (file=='right'){
         CSVFile = new Blob([csvright], {type:"text/csv"});
-        temp_link.download = subjectDate+"right.csv";
+        temp_link.download = subjectDate+"righthand.csv";
     }
     else if (file=='edinburgh') {
 
