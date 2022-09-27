@@ -519,18 +519,21 @@ function handleMotion(event) {
     
   // Store acceleration data into arrays after 1.5 seconds
   if (time>1500){
-    // Append to csv file
-    if (recordingHand=='left'){
-        left_ax.push(event.acceleration.x);
-        left_ay.push(event.acceleration.y);
-        left_az.push(event.acceleration.z);
-        csvleft += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
-    }
-    else if (recordingHand=='right'){
-        right_ax.push(event.acceleration.x);
-        right_ay.push(event.acceleration.y);
-        right_az.push(event.acceleration.z);
-        csvright += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+    // Only record values if nothing is undefined or null
+    if (time==null||event.acceleration.x==null||event.acceleration.y==null||event.acceleration.z==null) {
+        // Append to csv file
+        if (recordingHand=='left'){
+            left_ax.push(event.acceleration.x);
+            left_ay.push(event.acceleration.y);
+            left_az.push(event.acceleration.z);
+            csvleft += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+        }
+        else if (recordingHand=='right'){
+            right_ax.push(event.acceleration.x);
+            right_ay.push(event.acceleration.y);
+            right_az.push(event.acceleration.z);
+            csvright += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+        }
     }
   }
 }
