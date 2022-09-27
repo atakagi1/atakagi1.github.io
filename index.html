@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel=”stylesheet” type=”text/css” href=”style.css”>
     <script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/bowser@latest/es5.js'></script>
 
     <style>
         .row {
@@ -22,6 +23,16 @@
             font-family: Arial, Helvetica, sans-serif;
             font-size: 17px;
         }
+
+        .blockDiv {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            background-color: #FFF;
+            width: 0px;
+            height: 0px;
+            z-index: 999999;
+        }
         </style>
     <script src="moment.js"></script>
     <!--<script src="papaparse.js"></script>-->
@@ -31,13 +42,15 @@
 </head>
 <body onload="update_language('en')">
 <main>
-
+    
 
     Debug: <span id="test"></span>
-
     <input type="file" id="file" name="file">
 
-    <div id="plotdiv" style="width:300px; height: 300px" style="text-align: center;"></div>
+    <div style="text-align: right;">
+    <button onclick="update_language('en')"><span class="spanstyle" style="font-size: 12px;">English</span></button> 
+    <button onclick="update_language('jp')"><span class="spanstyle" style="font-size: 12px;">日本語</span></button> 
+    </div>
 
 <!-- Skill Examiner logo -->
 <div style="text-align: center;"><img width="200" height="150" src="handed_icon.png"></div>
@@ -74,20 +87,22 @@
     <span id="startmeasuring" class="spanstyle" style="font-size: 23px; font-weight: bold;"></span>
 </div>
 
-<!-- Record buttons -->
+<!-- Start left and right recording image -->
 <div class="row">
     <div class="column" style="text-align: center;"><input type="image" src="lefthand.png" id="startLeft" name="submit" width="80" height="110" onclick="start_recording('left')"/></div>
     <div class="column" style="text-align: center;"><input type="image" src="righthand.png" id="startRight" name="submit" width="80" height="110" onclick="start_recording('right')"/></div>
 </div>
 
+<!-- Record left and right data buttons -->
+<div class="row">
+    <div class="column" style="text-align: center;"><button onclick="download_files('left')" id="leftrecordbutton"><span class="spanstyle">Save Left Data</span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('right')" id="rightrecordbutton"><span class="spanstyle">Save Right Data</span></button></div>
+</div>
 
+<!-- Plot results -->
+<div id="plotdiv" style="width:100%; height: 140px;" style="text-align: center;"></div>
 
 <div style="text-align: center;">
-    
-    <button onclick="download_files('left')"> Save Left Data </button> 
-    <button onclick="download_files('right')"> Save Right Data </button>  
-
-
     <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
 
     <h4>Accelerometer</h4>
@@ -97,35 +112,38 @@
     <li>Z-axis: <span id="Accelerometer_z">0</span><span> m/s<sup>2</sup></span></li>
     <li>Data Interval: <span id="Accelerometer_i">0</span><span> ms</span></li>
     </ul>
-
-    <button onclick="update_language('en')"> English </button> 
-    <button onclick="update_language('jp')"> Japanese </button> 
-
-    
+   
 </div>
 
-
-
-
-
-<!-- Age -->
-<span id="age" class="spanstyle"></span>:<select id="age">
-<option value="n/a">...</option>
-<option value="3-9">3-9</option>
-<option value="10-19">10-19</option>
-<option value="20-29">20-29</option>
-<option value="30-39">30-39</option>
-<option value="40-49">40-49</option>
-<option value="50-59">50-59</option>
-<option value="60+">60+</option>
-</select>
-&emsp;&emsp;
-<!-- Sex -->
-<span id="sex" class="spanstyle"></span>:<select name="sex">
-    <option value="n/a">...</option>
-    <option value="male">M</option>
-    <option value="female">F</option>
-    </select>
+<div style="text-align: center"><span class="spanstyle" style="font-weight: bold; font-size: 25px;">Questions:</span></div>
+<div class="row">
+    <div class="column" style="text-align: center;">
+        <!-- Age -->
+        <span id="age" class="spanstyle"></span>: &ensp;<select id="ageselect">
+        <option value="...">...</option>
+        <option value="3-9">3-9</option>
+        <option value="10-19">10-19</option>
+        <option value="20-29">20-29</option>
+        <option value="30-39">30-39</option>
+        <option value="40-49">40-49</option>
+        <option value="50-59">50-59</option>
+        <option value="60+">60+</option>
+        </select>
+    </div>
+    <div class="column" style="text-align: center;">
+        <!-- Sex -->
+        <span id="sex" class="spanstyle"></span>:&ensp;<select id="sexselect">
+            <option value="...">...</option>
+            <option value="M">M</option>
+            <option value="F">F</option>
+            </select>
+    </div>
+</div>
+<br>
+<div style="text-align: center;">
+    <!-- Edinburgh instructions -->
+    <span id="edinburghinstructions" class="spanstyle" style="font-weight: bold;"></span>
+</div>
 
 <!-- Edinburgh -->
 <div class="row">
@@ -234,6 +252,7 @@
         </div>
     </div>
 </div>
+<br>
 <div class="row">
     <div class="column" style="text-align: right;">
         <span id="kicking" class="spanstyle"></span>
@@ -244,13 +263,46 @@
         </div>
     </div>
 </div>
+<br>
+<!-- Forcibly corrected to be right-handed? -->
+<div style="text-align: center;"><span id="forced" class="spanstyle"></span>&ensp;&ensp;<select id="forcedselect">
+    <option value="no">No</option>
+    <option value="yes">Yes</option>
+    </select></div>
+<br><br>
+<!-- Save Edinburgh button -->
+<div style="text-align: center;"><button onclick="download_files('edinburgh')"><span class="spanstyle">Save Edinburgh</span></button></div>
 
 </main>
 
 <script>
 
+// Get subject name and date for file storage
 var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
-//document.getElementById("test").innerHTML = subjectDate;
+
+// Hide record buttons until data is recorded
+document.getElementById("leftrecordbutton").style.display="none";
+document.getElementById("rightrecordbutton").style.display="none";
+document.getElementById("plotdiv").style.display="none";
+
+// JQuery code to detect browser
+var browser;
+function detectBrowser() {
+
+    var agent = navigator.userAgent.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+    if (navigator.userAgent.match(/Edge/i) || navigator.userAgent.match(/Trident.*rv[ :]*11\./i)) {
+        browser = "edge";
+    }
+    else {
+        browser = agent[1].toLowerCase();
+    }
+
+    // Warn user to user Firefox or Safari as other browsers round accelerometer values
+    if (browser=='chrome') {
+        //alert("This app only works with Firefox or Safari.");
+    }
+};
+detectBrowser();
 
 // English dictionary
 var lang_en = {
@@ -276,7 +328,9 @@ var lang_en = {
     male: "M",
     female: "F",
     age: "Age",
-    sex: "Sex"
+    sex: "Sex",
+    edinburghinstructions: "Use sliders to select preferred hand",
+    forced: "Were you forced to be right-handed:"
 }
 // Japanese dictionary
 var lang_jp = {
@@ -302,7 +356,9 @@ var lang_jp = {
     male: "男",
     female: "女",
     age: "年齢",
-    sex: "性"
+    sex: "性",
+    edinburghinstructions: "使う手をスライダーで選択して下さい",
+    forced: "左から右手に矯正された事がある:",
 }
 
 function update_language(language) {
@@ -334,6 +390,8 @@ function update_language(language) {
     document.getElementById("right").innerHTML = lang.right;
     document.getElementById("age").innerHTML = lang.age;
     document.getElementById("sex").innerHTML = lang.sex;
+    document.getElementById("edinburghinstructions").innerHTML = lang.edinburghinstructions;
+    document.getElementById("forced").innerHTML = lang.forced;
 }
 
 var csvleft;
@@ -344,7 +402,6 @@ var audio;
 var recordingHand;
 
 function download_files(file) {  
-    document.getElementById("test").innerHTML = csvleft;
 
     var temp_link = document.createElement('a');
     if (file=='left'){
@@ -355,19 +412,13 @@ function download_files(file) {
         CSVFile = new Blob([csvright], {type:"text/csv"});
         temp_link.download = subjectDate+"right.csv";
     }
-   // Create CSV file object and feed our
-    // csv_data into it
-    
-    temp_link.href = window.URL.createObjectURL(CSVFile);
-    temp_link.style.display = "none";
-    document.body.appendChild(temp_link);
-    temp_link.click();
-    document.body.removeChild(temp_link);
+    else if (file=='edinburgh') {
 
-    
-  /*
-  // Save participant info (Edinburgh, demographics, etc)
-  info = "writing,"+document.getElementById("writingRange").value+"\n"+
+        var age_selected = document.getElementById('ageselect');
+        var sex_selected = document.getElementById('sexselect');
+        var forced_selected = document.getElementById('forcedselect');
+
+        csvinfo = "writing,"+document.getElementById("writingRange").value+"\n"+
          "drawing,"+document.getElementById("drawingRange").value+"\n"+
          "throwing,"+document.getElementById("throwingRange").value+"\n"+
          "scissors,"+document.getElementById("scissorsRange").value+"\n"+
@@ -376,19 +427,23 @@ function download_files(file) {
          "spoon,"+document.getElementById("spoonRange").value+"\n"+
          "broom (upper hand),"+document.getElementById("broomRange").value+"\n"+
          "striking match (match),"+document.getElementById("matchRange").value+"\n"+
-         "opening box (lid),"+document.getElementById("openingboxRange").value+"\n";
+         "opening box (lid),"+document.getElementById("openingboxRange").value+"\n"+
+         "age,"+age_selected.options[age_selected.selectedIndex].value+"\n"+
+         "sex,"+sex_selected.options[sex_selected.selectedIndex].value+"\n"+
+         "force righthand,"+forced_selected.options[forced_selected.selectedIndex].value+"\n";
 
-  document.getElementById("test").innerHTML = info;
-  */
-  /*
-  var infocsv = document.createElement('b');  
-  infocsv.href = 'data:text/csv;charset=utf-8,' + encodeURI(info);  
-  infocsv.target = '_blank';  
-  //provide the name for the CSV file to be downloaded  
-  infocsv.download = 'edinburgh.csv';  
-  infocsv.click(); 
-  */
+        CSVFile = new Blob([csvinfo], {type:"text/csv"});
+        temp_link.download = subjectDate+"edinburgh.csv";
+
+    }
+   // Create CSV file object and feed csv into it
+    temp_link.href = window.URL.createObjectURL(CSVFile);
+    temp_link.style.display = "none";
+    document.body.appendChild(temp_link);
+    temp_link.click();
+    document.body.removeChild(temp_link);
 }  
+
 
 
 function incrementEventCount(){
@@ -405,6 +460,11 @@ function updateFieldIfNotNull(fieldName, value, precision=10){
 var left_ax = [];
 var left_ay = [];
 var left_az = [];
+var right_ax = [];
+var right_ay = [];
+var right_az = [];
+var left_finished = false;
+var right_finished = false;
 function handleMotion(event) {
   updateFieldIfNotNull('Accelerometer_x', event.acceleration.x);
   updateFieldIfNotNull('Accelerometer_y', event.acceleration.y);
@@ -424,18 +484,32 @@ function handleMotion(event) {
   right_az.length = 0;
 
   // Stop recording after 15 seconds
-  if (time>1000) {
+  if (time>15000) {
     audio.pause();
     is_running = false;
 
     // Update image to recording done
     if (recordingHand=='left'){
         document.getElementById("startLeft").src="lefthand_done.png";
+        // Show record left data button
+        document.getElementById("leftrecordbutton").style.display="";
+        left_finished = true;
     }
     else if (recordingHand=='right'){
-        document.getElementById("startRight").src="righthanddone.png";
+        document.getElementById("startRight").src="righthand_done.png";
+        // Show record right data button
+        document.getElementById("rightrecordbutton").style.display="";
+        right_finished = true;
     }
 
+    if (left_finished&&right_finished) {
+        document.getElementById("plotdiv").style.display="";
+        // Plot data
+        plotData(resampleArray(left_ax),resampleArray(left_ay),resampleArray(right_ax),resampleArray(right_ay));
+    }
+
+    // Unblock screen
+    unblock_screen();
     // Stop accelerometer
     window.removeEventListener("devicemotion", handleMotion);
     
@@ -459,8 +533,6 @@ function handleMotion(event) {
         csvright += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
     }
   }
-  // For debugging
-  //document.getElementById("test").innerHTML = csv;
 }
 
 let is_running = false;
@@ -491,7 +563,11 @@ function start_recording(hand) {
     // Play metronome
     audio = new Audio('tick.mp3');
     audio.loop = false;
-    audio.play(); 
+    audio.play();
+
+    // Blocking overlay to prevent user interaction
+    confirm("Press OK to start recording!");
+    block_screen();
   }
 };
 
@@ -555,8 +631,6 @@ function parseResult(result) {
 
     let LeftVar = hausdorff_distance(xdata,ydata,zdata);
 
-    document.getElementById("test").innerHTML = LeftVar;
-
     plotData(resampleArray(xdata),resampleArray(ydata),resampleArray(xdata)+1,resampleArray(ydata));
     
 }
@@ -594,6 +668,12 @@ function plotData(x1,y1,x2,y2) {
 
     var layout = {
         showlegend: false,
+        margin: {
+            t: 10,
+            b: 10,
+            l: 10,
+            r: 10
+        },
         xaxis: {
             autorange: true,
             showgrid: false,
@@ -617,7 +697,18 @@ function plotData(x1,y1,x2,y2) {
     Plotly.newPlot(document.getElementById('plotdiv'), data, layout);
 }
 
+function block_screen() {
+  $('<div id="screenBlock" style="text-align: center; display: inline-block;"><br><br><br><span style="text-align: center; font-size: 100px;">Go!</span></div>').appendTo('body');
+  $('#screenBlock').css( { opacity: 0, width: $(document).width(), height: $(document).height() } );
+  $('#screenBlock').addClass('blockDiv');
+  $('#screenBlock').animate({opacity: 0.7}, 200);
+}
 
+function unblock_screen() {
+  $('#screenBlock').animate({opacity: 0}, 200, function() {
+      $('#screenBlock').remove();
+  });
+}
 
 </script>
 
