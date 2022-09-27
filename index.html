@@ -564,14 +564,14 @@ function start_recording(hand) {
     StartTime = Date.now();
 
     // Clear arrays in case of re-recording
-    left_ax.length = 0;
-    left_ay.length = 0;
-    left_az.length = 0;
-    right_ax.length = 0;
-    right_ay.length = 0;
-    right_az.length = 0;
-    csvleft.length = 0;
-    csvright.length = 0;    
+    left_ax = [];
+    left_ay = [];
+    left_az = [];
+    right_ax = [];
+    right_ay = [];
+    right_az = [];
+    csvleft = [];
+    csvright = [];    
 
     // Start recording
     window.addEventListener("devicemotion", handleMotion);
