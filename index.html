@@ -420,6 +420,14 @@ function download_files(file) {
         var sex_selected = document.getElementById('sexselect');
         var forced_selected = document.getElementById('forcedselect');
 
+        var EdinburghStore = [document.getElementById("writingRange").value,document.getElementById("drawingRange").value,document.getElementById("throwingRange").value,document.getElementById("scissorsRange").value,document.getElementById("toothbrushRange").value,document.getElementById("knifeRange").value,document.getElementById("spoonRange").value,document.getElementById("broomRange").value,document.getElementById("matchRange").value,document.getElementById("openingboxRange").value];
+        var numerator = 0;
+        var denominator = 0;
+        for (let i=0; i<EdinburghStore.length; i++){
+            numerator += Math.floor(EdinburghStore[i]);
+            denominator += Math.abs(EdinburghStore[i]) + 2*((EdinburghStore[i]==0)?1:0);
+        }
+
         csvinfo = "writing,"+document.getElementById("writingRange").value+"\n"+
          "drawing,"+document.getElementById("drawingRange").value+"\n"+
          "throwing,"+document.getElementById("throwingRange").value+"\n"+
@@ -430,6 +438,7 @@ function download_files(file) {
          "broom (upper hand),"+document.getElementById("broomRange").value+"\n"+
          "striking match (match),"+document.getElementById("matchRange").value+"\n"+
          "opening box (lid),"+document.getElementById("openingboxRange").value+"\n"+
+         "edinburgh score,"+numerator/denominator+"\n"+
          "age,"+age_selected.options[age_selected.selectedIndex].value+"\n"+
          "sex,"+sex_selected.options[sex_selected.selectedIndex].value+"\n"+
          "force righthand,"+forced_selected.options[forced_selected.selectedIndex].value+"\n";
@@ -476,14 +485,6 @@ function handleMotion(event) {
 
   // Time of measurement with respect to start of recording
   time = Date.now()-StartTime;
-
-  // Clear arrays in case of re-recording
-  left_ax.length = 0;
-  left_ay.length = 0;
-  left_az.length = 0;
-  right_ax.length = 0;
-  right_ay.length = 0;
-  right_az.length = 0;
 
   // Stop recording after 15 seconds
   if (time>RecordTime) {
@@ -559,11 +560,22 @@ function start_recording(hand) {
 
     is_running = false;
   }else{
+    // Store start recording time
+    StartTime = Date.now();
+
+    // Clear arrays in case of re-recording
+    left_ax.length = 0;
+    left_ay.length = 0;
+    left_az.length = 0;
+    right_ax.length = 0;
+    right_ay.length = 0;
+    right_az.length = 0;
+    csvleft.length = 0;
+    csvright.length = 0;    
+
     // Start recording
     window.addEventListener("devicemotion", handleMotion);
     is_running = true;
-    // Store start recording time
-    StartTime = Date.now();
 
     // Play metronome
     audio = new Audio('tick.mp3');
