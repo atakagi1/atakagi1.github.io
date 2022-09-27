@@ -277,6 +277,8 @@
 
 <script>
 
+const RecordTime = 3000;
+
 // Get subject name and date for file storage
 var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
 
@@ -484,7 +486,7 @@ function handleMotion(event) {
   right_az.length = 0;
 
   // Stop recording after 15 seconds
-  if (time>15000) {
+  if (time>RecordTime) {
     audio.pause();
     is_running = false;
 
@@ -520,7 +522,7 @@ function handleMotion(event) {
   // Store acceleration data into arrays after 1.5 seconds
   if (time>1500){
     // Only record values if nothing is undefined or null
-    if (time==null||event.acceleration.x==null||event.acceleration.y==null||event.acceleration.z==null) {
+    if (time!=null&&event.acceleration.x!=null&&event.acceleration.y!=null&&event.acceleration.z!=null) {
         // Append to csv file
         if (recordingHand=='left'){
             left_ax.push(event.acceleration.x);
