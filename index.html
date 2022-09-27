@@ -98,8 +98,14 @@
     <div class="column" style="text-align: center;"><button onclick="download_files('left')" id="leftrecordbutton"><span class="spanstyle">Save Left Data</span></button></div>
     <div class="column" style="text-align: center;"><button onclick="download_files('right')" id="rightrecordbutton"><span class="spanstyle">Save Right Data</span></button></div>
 </div>
+<br>
+<!-- Scores: (1-metric)*100 -->
+<div class="row" id="scorediv">
+    <div class="column" style="text-align: center;"><span class="spanstyle">Left Score: </span><span id="leftscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
+    <div class="column" style="text-align: center;"><span class="spanstyle">Right Score: </span><span id="rightscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
+</div>
 
-<!-- Plot results -->
+<!-- Plot raw data -->
 <div id="plotdiv" style="width:100%; height: 140px;" style="text-align: center;"></div>
 
 <div style="text-align: center;">
@@ -287,6 +293,7 @@ var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
 document.getElementById("leftrecordbutton").style.display="none";
 document.getElementById("rightrecordbutton").style.display="none";
 document.getElementById("plotdiv").style.display="none";
+document.getElementById("scorediv").style.display="none";
 
 // JQuery code to detect browser
 var browser;
@@ -510,6 +517,15 @@ function handleMotion(event) {
         document.getElementById("plotdiv").style.display="";
         // Plot data
         plotData(resampleArray(left_ax),resampleArray(left_ay),resampleArray(right_ax),resampleArray(right_ay));
+
+        // Calculate movement variability metrics
+        let LeftVariability = hausdorff_distance(left_ax,left_ay,left_az);
+        let RightVariability = hausdorff_distance(right_ax,right_ay,right_az);
+
+        // Show scores
+        document.getElementById("scorediv").style.display="";
+        document.getElementById("leftscore").innerHTML = (1-calculateMean(LeftVariability).toFixed(3))*100;
+        document.getElementById("rightscore").innerHTML = (1-calculateMean(RightVariability).toFixed(3))*100;
     }
 
     // Unblock screen
@@ -648,14 +664,16 @@ function parseResult(result) {
     });
 
     let LeftVar = hausdorff_distance(xdata,ydata,zdata);
+    document.getElementById("leftscore").innerHTML = (1-calculateMean(LeftVar).toFixed(3))*100+"%";
 
-    plotData(resampleArray(xdata),resampleArray(ydata),resampleArray(xdata)+1,resampleArray(ydata));
+    document.getElementById("plotdiv").style.display="";
+    plotData(resampleArray(xdata),resampleArray(ydata),resampleArray(xdata),resampleArray(ydata));
     
 }
 
 function resampleArray(array) {
     return array.filter(function(value, index, Arr) {
-        return index % Math.round(array.length/200) == 0;
+        return index % Math.round(array.length/700) == 0;
     });
 }
 
@@ -663,22 +681,22 @@ function plotData(x1,y1,x2,y2) {
     var trace1 = {
     x: x1,
     y: y1,
-    mode: 'markers',
+    mode: 'lines',
     type: 'scatter',
-    marker: {
+    line: {
         color: 'rgb(255, 0, 0)',
-        size: 5,
+        width: 1,
         },
     };
 
     var trace2 = {
     x: x2,
     y: y2,
-    mode: 'markers',
+    mode: 'lines',
     type: 'scatter',
-    marker: {
+    line: {
         color: 'rgb(0, 0, 255)',
-        size: 5,
+        width: 1,
         },
     };
 
