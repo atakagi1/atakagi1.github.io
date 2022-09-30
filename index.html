@@ -295,7 +295,7 @@
 <script>
 
 // Standard is 15 seconds
-var RecordTime = 15000;
+var RecordTime = 2000;
 
 // Get subject name and date for file storage
 var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
@@ -512,11 +512,6 @@ var right_az = [];
 var left_finished = false;
 var right_finished = false;
 function handleMotion(event) {
-  updateFieldIfNotNull('Accelerometer_x', event.acceleration.x);
-  updateFieldIfNotNull('Accelerometer_y', event.acceleration.y);
-  updateFieldIfNotNull('Accelerometer_z', event.acceleration.z);
-  updateFieldIfNotNull('Accelerometer_i', event.interval, 2);
-  incrementEventCount();
 
   // Time of measurement with respect to start of recording
   time = Date.now()-StartTime;
