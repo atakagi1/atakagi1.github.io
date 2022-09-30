@@ -43,10 +43,10 @@
 <body onload="update_language('en')">
 <main>
     
-    
+    <!--
     Debug: <span id="test"></span>
     <input type="file" id="file" name="file">
-    
+    -->
 
 <!-- Language buttons -->
 <div style="text-align: right;">
@@ -295,7 +295,7 @@
 <script>
 
 // Standard is 15 seconds
-var RecordTime = 2000;
+const RecordTime = 15000;
 
 // Get subject name and date for file storage
 var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
