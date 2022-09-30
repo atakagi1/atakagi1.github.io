@@ -47,10 +47,15 @@
     Debug: <span id="test"></span>
     <input type="file" id="file" name="file">
 
-    <div style="text-align: right;">
-    <button onclick="update_language('en')"><span class="spanstyle" style="font-size: 12px;">English</span></button> 
-    <button onclick="update_language('jp')"><span class="spanstyle" style="font-size: 12px;">日本語</span></button> 
-    </div>
+<!-- Language buttons -->
+<div style="text-align: right;">
+<button onclick="update_language('en')"><span class="spanstyle" style="font-size: 12px;">English</span></button>
+<button onclick="update_language('jp')"><span class="spanstyle" style="font-size: 12px;">日本語</span></button> 
+</div>
+
+<!-- Browser warning for anything besides Firefox and Safari -->
+<div style="text-align: center;" id="browserwarningdiv"><span class="spanstyle" style="font-weight: bolder; color:red; font-size: 30px;">Only works in Firefox or Safari</span></div>
+<br>
 
 <!-- Skill Examiner logo -->
 <div style="text-align: center;"><img width="200" height="150" src="handed_icon.png"></div>
@@ -85,6 +90,10 @@
 
     <!-- Start measuring! -->
     <span id="startmeasuring" class="spanstyle" style="font-size: 23px; font-weight: bold;"></span>
+    <br>
+
+    <!-- Volume warning -->
+    <span id="volumewarning" class="spanstyle" style="font-size: 18px; font-weight: bold; color:red"></span>
 </div>
 
 <!-- Start left and right recording image -->
@@ -121,7 +130,7 @@
    
 </div>
 
-<div style="text-align: center"><span class="spanstyle" style="font-weight: bold; font-size: 25px;">Questions:</span></div>
+<div style="text-align: center"><span id="questionnaire" class="spanstyle" style="font-weight: bold; font-size: 25px;"></span></div>
 <div class="row">
     <div class="column" style="text-align: center;">
         <!-- Age -->
@@ -140,8 +149,8 @@
         <!-- Sex -->
         <span id="sex" class="spanstyle"></span>:&ensp;<select id="sexselect">
             <option value="...">...</option>
-            <option value="M">M</option>
-            <option value="F">F</option>
+            <option value="M"></option>
+            <option value="F"></option>
             </select>
     </div>
 </div>
@@ -272,8 +281,8 @@
 <br>
 <!-- Forcibly corrected to be right-handed? -->
 <div style="text-align: center;"><span id="forced" class="spanstyle"></span>&ensp;&ensp;<select id="forcedselect">
-    <option value="no">No</option>
-    <option value="yes">Yes</option>
+    <option value="no"></option>
+    <option value="yes"></option>
     </select></div>
 <br><br>
 <!-- Save Edinburgh button -->
@@ -286,13 +295,6 @@
 // Standard is 15 seconds
 const RecordTime = 15000;
 
-document.getElementById("test").innerHTML = document.querySelector("video").volume;
-
-document.querySelector("video").addEventListener(e => {
-    // Change your custom control UI
-    document.getElementById("test").innerHTML = document.querySelector("video").volume;
-});
-
 // Get subject name and date for file storage
 var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
 
@@ -301,6 +303,7 @@ document.getElementById("leftrecordbutton").style.display="none";
 document.getElementById("rightrecordbutton").style.display="none";
 document.getElementById("plotdiv").style.display="none";
 document.getElementById("scorediv").style.display="none";
+document.getElementById("browserwarningdiv").style.display="none";
 
 // JQuery code to detect browser
 var browser;
@@ -316,7 +319,7 @@ function detectBrowser() {
 
     // Warn user to user Firefox or Safari as other browsers round accelerometer values
     if (browser=='chrome') {
-        //alert("This app only works with Firefox or Safari.");
+        document.getElementById("browserwarningdiv").style.display="";
     }
 };
 detectBrowser();
@@ -328,7 +331,9 @@ var lang_en = {
     outwards: "Rotate OUTWARDS drawing circles 10 cm wide (size of fist)",
     ticking: "Complete one circle per tick",
     examplevideo: "Example:",
-    startmeasuring: "Start measuring!",
+    startmeasuring: "Start measuring:",
+    volumewarning: "Tip: turn up your device's volume!",
+    questionnaire: "Questionnaire",
     writing: "Writing",
     drawing: "Drawing",
     throwing: "Throwing",
@@ -346,6 +351,8 @@ var lang_en = {
     female: "F",
     age: "Age",
     sex: "Sex",
+    no: "No",
+    yes: "Yes",
     edinburghinstructions: "Use sliders to select preferred hand",
     forced: "Were you forced to be right-handed:"
 }
@@ -356,7 +363,9 @@ var lang_jp = {
     outwards: "外回りに回す。円の大きさは10cm(拳１個分程度)",
     ticking: "音が鳴るので、１回の音に対し一周回す",
     examplevideo: "見本:",
-    startmeasuring: "Start measuring!",
+    startmeasuring: "計測スタート:",
+    volumewarning: "デバイスの音量を上げて下さい!",
+    questionnaire: "アンケート",
     writing: "字を書く",
     drawing: "絵を描く",
     throwing: "ボールを投げる",
@@ -374,6 +383,8 @@ var lang_jp = {
     female: "女",
     age: "年齢",
     sex: "性",
+    no: "いいえ",
+    yes: "はい",
     edinburghinstructions: "使う手をスライダーで選択して下さい",
     forced: "左から右手に矯正された事がある:",
 }
@@ -392,6 +403,8 @@ function update_language(language) {
     document.getElementById("ticking").innerHTML = lang.ticking;
     document.getElementById("examplevideo").innerHTML = lang.examplevideo;
     document.getElementById("startmeasuring").innerHTML = lang.startmeasuring;
+    document.getElementById("volumewarning").innerHTML = lang.volumewarning;
+    document.getElementById("questionnaire").innerHTML = lang.questionnaire;
     document.getElementById("writing").innerHTML = lang.writing;
     document.getElementById("drawing").innerHTML = lang.drawing;
     document.getElementById("throwing").innerHTML = lang.throwing;
@@ -407,6 +420,10 @@ function update_language(language) {
     document.getElementById("right").innerHTML = lang.right;
     document.getElementById("age").innerHTML = lang.age;
     document.getElementById("sex").innerHTML = lang.sex;
+    document.getElementById("sexselect").options[1].innerHTML = lang.male;
+    document.getElementById("sexselect").options[2].innerHTML = lang.female;
+    document.getElementById("forcedselect").options[0].innerHTML = lang.no;
+    document.getElementById("forcedselect").options[1].innerHTML = lang.yes;
     document.getElementById("edinburghinstructions").innerHTML = lang.edinburghinstructions;
     document.getElementById("forced").innerHTML = lang.forced;
 }
