@@ -581,14 +581,15 @@ function handleMotion(event) {
   }
 }
 
+// Request permission for iOS 13+ devices
+if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+    DeviceMotionEvent.requestPermission();
+}
 function start_recording(hand) {
     // Which hand is recording?
     recordingHand = hand;
 
-    // Request permission for iOS 13+ devices
-    if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-        DeviceMotionEvent.requestPermission();
-    }
+    
 
     // Store start recording time
     StartTime = Date.now();
