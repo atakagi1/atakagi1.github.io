@@ -295,7 +295,7 @@
 <script>
 
 // Standard is 15 seconds
-var RecordTime = 2000;
+var RecordTime = 15000;
 
 // Get subject name and date for file storage
 var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
@@ -323,6 +323,7 @@ function detectBrowser() {
     if (browser=='chrome') {
         document.getElementById("browserwarningdiv").style.display="";
     }
+
 };
 detectBrowser();
 
@@ -581,15 +582,15 @@ function handleMotion(event) {
   }
 }
 
-// Request permission for iOS 13+ devices
-if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-    DeviceMotionEvent.requestPermission();
-}
+
 function start_recording(hand) {
     // Which hand is recording?
     recordingHand = hand;
 
-    
+    // Request permission for iOS 13+ devices
+    if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+        DeviceMotionEvent.requestPermission();
+    }
 
     // Store start recording time
     StartTime = Date.now();
@@ -621,6 +622,7 @@ function start_recording(hand) {
 
 };
 
+/*
 var file = document.getElementById('file');
 file.addEventListener('change', function() {
     var reader = new FileReader();
@@ -630,6 +632,7 @@ file.addEventListener('change', function() {
     };
     reader.readAsText(f);    
 });
+*/
 
 // Calculate mean offset of accelerometer data
 function calculateMean(array) {
@@ -762,8 +765,8 @@ function block_screen() {
 // Unblock screen
 function unblock_screen() {
   $('#screenBlock').animate({opacity: 0}, 200, function() {
-      //$('#screenBlock').remove();
-      document.getElementById("screenBlock").style.display="none";
+      $('#screenBlock').remove();
+      //document.getElementById("screenBlock").style.display="none";
   });
 }
 
