@@ -35,8 +35,6 @@
         }
         </style>
     <script src="moment.js"></script>
-    <!--<script src="papaparse.js"></script>-->
-    <!--<script src="papaparse.min.js"></script>-->
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="distance_metric_obfuscated.js"></script>
 </head>
@@ -490,8 +488,6 @@ function download_files(file) {
     document.body.removeChild(temp_link);
 }  
 
-
-
 function incrementEventCount(){
   let counterElement = document.getElementById("num-observed-events")
   let eventCount = parseInt(counterElement.innerHTML)
@@ -546,8 +542,8 @@ function handleMotion(event) {
 
         // Show scores
         document.getElementById("scorediv").style.display="";
-        document.getElementById("leftscore").innerHTML = (1-calculateMean(LeftVariability).toFixed(3))*100+"%";
-        document.getElementById("rightscore").innerHTML = (1-calculateMean(RightVariability).toFixed(3))*100+"%";
+        document.getElementById("leftscore").innerHTML = ((1-calculateMean(LeftVariability))*100).toFixed(3)+"%";
+        document.getElementById("rightscore").innerHTML = ((1-calculateMean(RightVariability))*100).toFixed(3)+"%";
     }
 
     // Unblock screen
