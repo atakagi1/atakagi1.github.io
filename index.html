@@ -576,8 +576,9 @@ function start_recording(hand) {
 
     // Request permission for iOS 13+ devices
     if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-        DeviceMotionEvent.requestPermission();
-        return;
+        // If denied access, exit function, otherwise continue
+        DeviceMotionEvent.requestPermission()
+        .then(response => { if (response == 'denied') {return;}});
     }
 
     // Which hand is recording?
