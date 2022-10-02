@@ -572,13 +572,14 @@ function handleMotion(event) {
   }
 }
 
+var PermissionIOS = null;
 function start_recording(hand) {
 
     // Request permission for iOS 13+ devices
-    if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-        // If denied access, exit function, otherwise continue
+    if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function" && PermissionIOS==null) {
         DeviceMotionEvent.requestPermission()
-        .then(response => { if (response == 'denied') {return;}});
+        .then(response => { if (response == 'granted') {PermissionIOS=true;} else if (response=='denied'){PermissionIOS=false;}});
+        return;
     }
 
     // Which hand is recording?
