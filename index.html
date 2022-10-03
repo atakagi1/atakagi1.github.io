@@ -576,13 +576,13 @@ var PermissionIOS = null;
 function start_recording(hand) {
 
     if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-        if (PermissionIOS==null) {
-            // Request permission for iOS 13+ devices
+        // In first instance, ask for permission for iOS 13+ devices
+        if (PermissionIOS==null) { 
             DeviceMotionEvent.requestPermission()
             .then(response => { if (response == 'granted') {PermissionIOS=true;} else if (response=='denied'){PermissionIOS=false;}});
             return;
         }
-        // If permission is denied, return
+        // If permission is denied exit function
         if (PermissionIOS==false){
             return;
         }
