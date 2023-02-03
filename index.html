@@ -361,31 +361,7 @@ username_element.addEventListener('input', function(event) {
     document.getElementById("subjectid").innerHTML = subjectDate;
 });
 
-// Update speed upon selection
-var audio;
-var speed_element = document.getElementById('speedselect');
-speed_element.addEventListener('change', function(event) {
-    switch (speed_element.options[speed_element.selectedIndex].value) {
-        case '1':
-            audio = new Audio('tick1hz.mp3');
-            break;
-        case '1point5':
-            audio = new Audio('tick1point5hz.mp3');
-            break;
-        case '2':
-            audio = new Audio('tick2hz.mp3');
-            break;
-        case '2point5':
-            audio = new Audio('tick2point5hz.mp3');
-            break;
-        case '3':
-            audio = new Audio('tick3hz.mp3');
-            break;
-        default:
-            audio = new Audio('tick2point5hz.mp3');
-            break;
-    }
-});
+
 
 // English dictionary
 var lang_en = {
@@ -571,6 +547,7 @@ var csvrightfoot;
 var Counter;
 var time;
 var recordingLimb;
+var audio;
 
 function download_files(file) {  
 
@@ -805,6 +782,20 @@ function start_recording(hand) {
     }
 
     // Play metronome
+    switch (speed_element.options[speed_element.selectedIndex].value) {
+        case '1':
+            audio = new Audio('tick_1hz.mp3');
+        case '1point5':
+            audio = new Audio('tick_1point5hz.mp3');
+        case '2':
+            audio = new Audio('tick_2hz.mp3');
+        case '2point5':
+            audio = new Audio('tick_2point5hz.mp3');
+        case '3':
+            audio = new Audio('tick_3hz.mp3');
+        default:
+            audio = new Audio('tick_2point5hz.mp3');
+    }
     audio.loop = false;
     audio.play();
 
