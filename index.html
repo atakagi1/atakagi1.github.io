@@ -62,6 +62,16 @@
 <!-- Skill Examiner logo -->
 <div style="text-align: center;"><img width="200" height="150" src="handed_icon.png"></div>
 <br>
+<!-- User ID and speed setting -->
+<div style="text-align: center;"><span class="spanstyle">ID: </span><input type="text" id="usernameform">&nbsp;&nbsp;&nbsp;<span class="spanstyle" id="speedtext"></span><select id="speedselect"> 
+    <option value="1">1</option>
+    <option value="1point5">1.5</option>
+    <option value="2">2</option>
+    <option value="2point5">2.5</option>
+    <option value="3">3</option>
+    </select></div>
+<br><br>
+
 <!-- How to measure -->
 <div style="text-align: center;">
     <!-- Face phone upwards -->
@@ -343,6 +353,40 @@ function detectBrowser() {
 };
 detectBrowser();
 
+// Update username upon input
+var username;
+var username_element = document.getElementById('usernameform');
+username_element.addEventListener('input', function(event) {
+    subjectDate = username_element.value.replace(/[^a-zA-Z0-9]/g,'')+"_"+moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
+    document.getElementById("subjectid").innerHTML = subjectDate;
+});
+
+// Update speed upon selection
+var audio;
+var speed_element = document.getElementById('speedselect');
+speed_element.addEventListener('change', function(event) {
+    switch (speed_element.options[speed_element.selectedIndex].value) {
+        case '1':
+            audio = new Audio('tick1hz.mp3');
+            break;
+        case '1point5':
+            audio = new Audio('tick1point5hz.mp3');
+            break;
+        case '2':
+            audio = new Audio('tick2hz.mp3');
+            break;
+        case '2point5':
+            audio = new Audio('tick2point5hz.mp3');
+            break;
+        case '3':
+            audio = new Audio('tick3hz.mp3');
+            break;
+        default:
+            audio = new Audio('tick2point5hz.mp3');
+            break;
+    }
+});
+
 // English dictionary
 var lang_en = {
     welcome: "Use a smartphone to measure your skill! For best results:",
@@ -380,7 +424,8 @@ var lang_en = {
     saveleftfootdata: "Save Left Foot Data",
     saverightfootdata: "Save Right Foot Data",
     lefthandscore: "Left hand score:",
-    leftrightscore: "Right hand score:"
+    leftrightscore: "Right hand score:",
+    speed: "Speed (Hz): "
 }
 // Japanese dictionary
 var lang_jp = {
@@ -419,7 +464,8 @@ var lang_jp = {
     saveleftfootdata: "左足 データ セーブ",
     saverightfootdata: "右足 データ セーブ",
     lefthandscore: "左手 スコア:",
-    leftrightscore: "右手 スコア:"
+    leftrightscore: "右手 スコア:",
+    speed: "速度 (Hz): "
 }
 
 // Japanese dictionary
@@ -459,7 +505,8 @@ var lang_jphiragana = {
     saveleftfootdata: "ひだりあし データ セーブ",
     saverightfootdata: "みぎあし データ セーブ",
     lefthandscore: "ひだりて スコア:",
-    leftrightscore: "みぎて スコア:"
+    leftrightscore: "みぎて スコア:",
+    speed: "はやさ (Hz): "
 }
 
 function update_language(language) {
@@ -510,6 +557,7 @@ function update_language(language) {
     document.getElementById("saverightfootdatatext").innerHTML = lang.saverightfootdata;
     document.getElementById("lefthandscoretext").innerHTML = lang.lefthandscore;
     document.getElementById("righthandscoretext").innerHTML = lang.righthandscore;
+    document.getElementById("speedtext").innerHTML = lang.speed;
 }
 
 var csvlefthand;
@@ -518,7 +566,6 @@ var csvleftfoot;
 var csvrightfoot;
 var Counter;
 var time;
-var audio;
 var recordingLimb;
 
 function download_files(file) {  
@@ -754,7 +801,6 @@ function start_recording(hand) {
     }
 
     // Play metronome
-    audio = new Audio('tick.mp3');
     audio.loop = false;
     audio.play();
 
