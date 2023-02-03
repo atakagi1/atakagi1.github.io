@@ -49,11 +49,12 @@
 <!-- Language buttons -->
 <div style="text-align: right;">
 <button onclick="update_language('en')"><span class="spanstyle" style="font-size: 12px;">English</span></button>
-<button onclick="update_language('jp')"><span class="spanstyle" style="font-size: 12px;">日本語</span></button> 
+<button onclick="update_language('jp')"><span class="spanstyle" style="font-size: 12px;">日本語</span></button>
+<button onclick="update_language('jphiragana')"><span class="spanstyle" style="font-size: 12px;">ひらがな</span></button> 
 </div>
 
 <!-- Browser warning for anything besides Firefox and Safari -->
-<div style="text-align: center;" id="browserwarningdiv"><img height="30" src="warning.jpg"><span class="spanstyle" style="font-weight: bolder; color:red; font-size: 30px;">Only works in Firefox or Safari</span></div>
+<div style="text-align: center;" id="browserwarningdiv"><img height="30" src="warning.jpg"><span class="spanstyle" style="font-weight: bolder; color:red; font-size: 30px;" id="browsercheck"></span></div>
 <br>
 
 <!-- Skill Examiner logo -->
@@ -97,14 +98,14 @@
 
 <!-- Start left and right recording image -->
 <div class="row">
-    <div class="column" style="text-align: center;"><input type="image" src="lefthand.png" id="startLeft" name="submit" width="80" height="110" onclick="start_recording('left')"/></div>
-    <div class="column" style="text-align: center;"><input type="image" src="righthand.png" id="startRight" name="submit" width="80" height="110" onclick="start_recording('right')"/></div>
+    <div class="column" style="text-align: center;"><input type="image" src="lefthand.png" id="startLeft" name="submit" width="80" height="110" onclick="start_recording('lefthand')"/></div>
+    <div class="column" style="text-align: center;"><input type="image" src="righthand.png" id="startRight" name="submit" width="80" height="110" onclick="start_recording('righthand')"/></div>
 </div>
 
 <!-- Record left and right data buttons -->
 <div class="row">
-    <div class="column" style="text-align: center;"><button onclick="download_files('left')" id="leftrecordbutton"><span class="spanstyle">Save Left Data</span></button></div>
-    <div class="column" style="text-align: center;"><button onclick="download_files('right')" id="rightrecordbutton"><span class="spanstyle">Save Right Data</span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('lefthand')" id="leftrecordbutton"><span class="spanstyle">Save Left Data</span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('righthand')" id="rightrecordbutton"><span class="spanstyle">Save Right Data</span></button></div>
 </div>
 <br>
 <!-- Scores: (1-metric)*100 -->
@@ -131,9 +132,10 @@
 <div style="text-align: center"><span id="questionnaire" class="spanstyle" style="font-weight: bold; font-size: 25px;"></span></div>
 <div class="row">
     <div class="column" style="text-align: center;">
+       
         <!-- Age -->
-        <span id="age" class="spanstyle"></span>: &ensp;<select id="ageselect">
-        <option value="...">...</option>
+        <span id="age" class="spanstyle"></span>: &ensp; <input type="number" id="agefield" min="1" max="100" value="..."><!--<select id="ageselect">
+        
         <option value="3-9">3-9</option>
         <option value="10-19">10-19</option>
         <option value="20-29">20-29</option>
@@ -141,7 +143,9 @@
         <option value="40-49">40-49</option>
         <option value="50-59">50-59</option>
         <option value="60+">60+</option>
+        
         </select>
+        -->
     </div>
     <div class="column" style="text-align: center;">
         <!-- Sex -->
@@ -292,6 +296,7 @@
 
 // Standard is 15 seconds
 const RecordTime = 15000;
+//const RecordTime = 100;
 
 // Get subject name and date for file storage
 var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
@@ -353,7 +358,8 @@ var lang_en = {
     no: "No",
     yes: "Yes",
     edinburghinstructions: "Use sliders to select preferred hand",
-    forced: "Were you forced to be right-handed:"
+    forced: "Were you forced to be right-handed:",
+    browsercheck: "Only works with Firefox or Safari"
 }
 // Japanese dictionary
 var lang_jp = {
@@ -386,6 +392,41 @@ var lang_jp = {
     yes: "はい",
     edinburghinstructions: "使う手をスライダーで選択して下さい",
     forced: "左から右手に矯正された事がある:",
+    browsercheck: "Firefox か Safariのみ対応しております"
+}
+
+// Japanese dictionary
+var lang_jphiragana = {
+    welcome: "うんどうのうりょくをはかります。ただしくはかるには",
+    upwards: "けいたいがうえにむくようにもち",
+    outwards: "そとまわりにまわす。まるの大きさはこぶしていど)",
+    ticking: "おとがなりますので、１かいの音にたいし、いっしゅうしてください",
+    examplevideo: "おてほん:",
+    startmeasuring: "スタート:",
+    volumewarning: "デバイスのおんりょうあげてください！",
+    questionnaire: "アンケート",
+    writing: "じをかく",
+    drawing: "えをかく",
+    throwing: "ボールをなげる",
+    scissors: "ハサミ",
+    toothbrush: "ハブラシ",
+    knife: "ナイフ",
+    spoon: "スプーン",
+    broom: "ホウキをもつうえのて",
+    match: "マッチをもつ",
+    openingbox: "ひきだしをあける",
+    kicking: "ボールをけるあし",
+    left: "ひだり",
+    right: "みぎ",
+    male: "おとこのこ",
+    female: "おんなのこ",
+    age: "なんさいですが?",
+    sex: "男の子・女の子?",
+    no: "いいえ",
+    yes: "はい",
+    edinburghinstructions: "つかうて・あしをえらんでください",
+    forced: "おはしをひだりてでもちたかったが、みぎてにもちかえた",
+    browsercheck: "Firefox か Safari をつかってください"
 }
 
 function update_language(language) {
@@ -394,6 +435,9 @@ function update_language(language) {
     }
     else if (language=='jp'){
         lang = lang_jp;
+    }
+    else if (language=='jphiragana'){
+        lang = lang_jphiragana;
     }
     // Replace all text
     document.getElementById("welcome").innerHTML = lang.welcome;
@@ -425,6 +469,7 @@ function update_language(language) {
     document.getElementById("forcedselect").options[1].innerHTML = lang.yes;
     document.getElementById("edinburghinstructions").innerHTML = lang.edinburghinstructions;
     document.getElementById("forced").innerHTML = lang.forced;
+    document.getElementById("browsercheck").innerHTML = lang.browsercheck;
 }
 
 var csvleft;
@@ -437,17 +482,17 @@ var recordingHand;
 function download_files(file) {  
 
     var temp_link = document.createElement('a');
-    if (file=='left'){
+    if (file=='lefthand'){
         CSVFile = new Blob([csvleft], {type:"text/csv"});
         temp_link.download = subjectDate+"lefthand.csv";
     }
-    else if (file=='right'){
+    else if (file=='righthand'){
         CSVFile = new Blob([csvright], {type:"text/csv"});
         temp_link.download = subjectDate+"righthand.csv";
     }
     else if (file=='edinburgh') {
 
-        var age_selected = document.getElementById('ageselect');
+        //var age_selected = document.getElementById('ageselect');        
         var sex_selected = document.getElementById('sexselect');
         var forced_selected = document.getElementById('forcedselect');
 
@@ -470,7 +515,8 @@ function download_files(file) {
          "striking match (match),"+document.getElementById("matchRange").value+"\n"+
          "opening box (lid),"+document.getElementById("openingboxRange").value+"\n"+
          "edinburgh score,"+numerator/denominator+"\n"+
-         "age,"+age_selected.options[age_selected.selectedIndex].value+"\n"+
+         //"age,"+age_selected.options[age_selected.selectedIndex].value+"\n"+
+         "age,"+document.getElementById("agefield").value+"\n"+
          "sex,"+sex_selected.options[sex_selected.selectedIndex].value+"\n"+
          "force righthand,"+forced_selected.options[forced_selected.selectedIndex].value+"\n";
 
@@ -518,13 +564,13 @@ function handleMotion(event) {
     is_running = false;
 
     // Update image to recording done
-    if (recordingHand=='left'){
+    if (recordingHand=='lefthand'){
         document.getElementById("startLeft").src="lefthand_done.png";
         // Show record left data button
         document.getElementById("leftrecordbutton").style.display="";
         left_finished = true;
     }
-    else if (recordingHand=='right'){
+    else if (recordingHand=='righthand'){
         document.getElementById("startRight").src="righthand_done.png";
         // Show record right data button
         document.getElementById("rightrecordbutton").style.display="";
@@ -557,13 +603,13 @@ function handleMotion(event) {
     // Only record values if nothing is undefined or null
     if (time!=null&&event.acceleration.x!=null&&event.acceleration.y!=null&&event.acceleration.z!=null) {
         // Append to csv file
-        if (recordingHand=='left'){
+        if (recordingHand=='lefthand'){
             left_ax.push(event.acceleration.x);
             left_ay.push(event.acceleration.y);
             left_az.push(event.acceleration.z);
             csvleft += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
         }
-        else if (recordingHand=='right'){
+        else if (recordingHand=='righthand'){
             right_ax.push(event.acceleration.x);
             right_ay.push(event.acceleration.y);
             right_az.push(event.acceleration.z);
@@ -600,13 +646,13 @@ function start_recording(hand) {
     block_screen();
 
     // Clear arrays in case of re-recording
-    if (recordingHand=='left'){
+    if (recordingHand=='lefthand'){
         left_ax = [];
         left_ay = [];
         left_az = [];
         csvleft = [];
     }
-    else if (recordingHand=='right'){
+    else if (recordingHand=='righthand'){
         right_ax = [];
         right_ay = [];
         right_az = [];
