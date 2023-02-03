@@ -116,8 +116,15 @@
 <!-- Record left and right hand data buttons -->
 <div class="row">
     <div class="column" style="text-align: center;"><button onclick="download_files('lefthand')" id="lefthandrecordbutton"><span id="savelefthanddatatext" class="spanstyle"></span></button></div>
-    <div class="column" style="text-align: center;"><button onclick="download_files('righthand')" id="righthandrecordbutton"><span id="savelefthanddatatext" class="spanstyle"></span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('righthand')" id="righthandrecordbutton"><span id="saverighthanddatatext" class="spanstyle"></span></button></div>
 </div>
+<!-- Hand Scores: (1-metric)*100 -->
+<div class="row" id="handscorediv">
+    <div class="column" style="text-align: center;"><span id="lefthandscoretext" class="spanstyle"></span><br><span id="lefthandscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
+    <div class="column" style="text-align: center;"><span id="righthandscoretext" class="spanstyle"></span><br><span id="righthandscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
+</div>
+<!-- Plot hand raw data -->
+<div id="handplotdiv" style="width:100%; height: 140px;" style="text-align: center;"></div>
 <br>
 
 <!-- Start left and right foot recording image -->
@@ -130,15 +137,15 @@
     <div class="column" style="text-align: center;"><button onclick="download_files('leftfoot')" id="leftfootrecordbutton"><span id="saveleftfootdatatext" class="spanstyle"></span></button></div>
     <div class="column" style="text-align: center;"><button onclick="download_files('rightfoot')" id="rightfootrecordbutton"><span id="saverightfootdatatext" class="spanstyle"></span></button></div>
 </div>
-
-<!-- Scores: (1-metric)*100 -->
-<div class="row" id="scorediv">
-    <div class="column" style="text-align: center;"><span id="lefthandscoretext" class="spanstyle"></span><br><span id="leftscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
-    <div class="column" style="text-align: center;"><span id="righthandscoretext" class="spanstyle"></span><br><span id="rightscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
+<!-- Foot Scores: (1-metric)*100 -->
+<div class="row" id="footscorediv">
+    <div class="column" style="text-align: center;"><span id="leftfootscoretext" class="spanstyle"></span><br><span id="leftfootscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
+    <div class="column" style="text-align: center;"><span id="rightfootscoretext" class="spanstyle"></span><br><span id="rightfootscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
 </div>
+<!-- Plot foot raw data -->
+<div id="footplotdiv" style="width:100%; height: 140px;" style="text-align: center;"></div>
+<br>
 
-<!-- Plot raw data -->
-<div id="plotdiv" style="width:100%; height: 140px;" style="text-align: center;"></div>
 
 <!--
 <div style="text-align: center;">
@@ -329,8 +336,10 @@ document.getElementById("lefthandrecordbutton").style.display="none";
 document.getElementById("righthandrecordbutton").style.display="none";
 document.getElementById("leftfootrecordbutton").style.display="none";
 document.getElementById("rightfootrecordbutton").style.display="none";
-document.getElementById("plotdiv").style.display="none";
-document.getElementById("scorediv").style.display="none";
+document.getElementById("handplotdiv").style.display="none";
+document.getElementById("handscorediv").style.display="none";
+document.getElementById("footplotdiv").style.display="none";
+document.getElementById("footscorediv").style.display="none";
 document.getElementById("browserwarningdiv").style.display="none";
 
 // JQuery code to detect browser
@@ -402,7 +411,9 @@ var lang_en = {
     saveleftfootdata: "Save Left Foot Data",
     saverightfootdata: "Save Right Foot Data",
     lefthandscore: "Left hand score:",
-    leftrightscore: "Right hand score:",
+    righthandscore: "Right hand score:",
+    leftfootscore: "Left foot score:",
+    rightfootscore: "Right foot score:",
     speed: "Speed (Hz): ",
     saveedinburgh: "Save Questionnaire"
 }
@@ -443,7 +454,9 @@ var lang_jp = {
     saveleftfootdata: "左足 データ セーブ",
     saverightfootdata: "右足 データ セーブ",
     lefthandscore: "左手 スコア:",
-    leftrightscore: "右手 スコア:",
+    righthandscore: "右手 スコア:",
+    leftfootscore: "左足 スコア:",
+    rightfootscore: "右足 スコア:",
     speed: "速度 (Hz): ",
     saveedinburgh: "アンケート セーブ"
 }
@@ -485,7 +498,9 @@ var lang_jphiragana = {
     saveleftfootdata: "ひだりあし データ セーブ",
     saverightfootdata: "みぎあし データ セーブ",
     lefthandscore: "ひだりて スコア:",
-    leftrightscore: "みぎて スコア:",
+    righthandscore: "みぎて スコア:",
+    leftfootscore: "ひだりあし スコア:",
+    rightfootscore: "みぎあし スコア:",
     speed: "はやさ (Hz): ",
     saveedinburgh: "アンケート セーブ"
 }
@@ -677,19 +692,36 @@ function handleMotion(event) {
         rightfoot_finished = true;
     }
 
+    // Show left and right hand raw plots and score
     if (lefthand_finished&&righthand_finished) {
-        document.getElementById("plotdiv").style.display="";
+        document.getElementById("handplotdiv").style.display="";
         // Plot data
         plotData(resampleArray(lefthand_ax),resampleArray(lefthand_ay),resampleArray(righthand_ax),resampleArray(righthand_ay));
 
         // Calculate movement variability metrics
-        let LeftVariability = hausdorff_distance(lefthand_ax,lefthand_ay,lefthand_az);
-        let RightVariability = hausdorff_distance(righthand_ax,righthand_ay,righthand_az);
+        let LeftHandVariability = hausdorff_distance(lefthand_ax,lefthand_ay,lefthand_az);
+        let RightHandVariability = hausdorff_distance(righthand_ax,righthand_ay,righthand_az);
 
         // Show scores
-        document.getElementById("scorediv").style.display="";
-        document.getElementById("leftscore").innerHTML = ((1.00-calculateMean(LeftVariability))*100).toFixed(2)+"%";
-        document.getElementById("rightscore").innerHTML = ((1.00-calculateMean(RightVariability))*100).toFixed(2)+"%";
+        document.getElementById("handscorediv").style.display="";
+        document.getElementById("lefthandscore").innerHTML = ((1.00-calculateMean(LeftHandVariability))*100).toFixed(2)+"%";
+        document.getElementById("righthandscore").innerHTML = ((1.00-calculateMean(RightHandVariability))*100).toFixed(2)+"%";
+    }
+
+    // Show left and right foot raw plots and score
+    if (leftfoot_finished&&rightfoot_finished) {
+        document.getElementById("footplotdiv").style.display="";
+        // Plot data
+        plotData(resampleArray(leftfoot_ay),resampleArray(leftfoot_az),resampleArray(rightfoot_ay),resampleArray(rightfoot_az));
+
+        // Calculate movement variability metrics
+        let LeftFootVariability = hausdorff_distance(leftfoot_ay,leftfoot_az,leftfoot_ax);
+        let RightFootVariability = hausdorff_distance(rightfoot_ay,rightfoot_az,rightfoot_ax);
+
+        // Show scores
+        document.getElementById("footscorediv").style.display="";
+        document.getElementById("leftfootscore").innerHTML = ((1.00-calculateMean(LeftFootVariability))*100).toFixed(2)+"%";
+        document.getElementById("rightfootscore").innerHTML = ((1.00-calculateMean(RightFootVariability))*100).toFixed(2)+"%";
     }
 
     // Unblock screen
@@ -861,9 +893,9 @@ function parseResult(result) {
     });
 
     let LeftVar = hausdorff_distance(xdata,ydata,zdata);
-    document.getElementById("leftscore").innerHTML = (1-calculateMean(LeftVar).toFixed(3))*100+"%";
+    document.getElementById("lefthandscore").innerHTML = (1-calculateMean(LeftVar).toFixed(3))*100+"%";
 
-    document.getElementById("plotdiv").style.display="";
+    document.getElementById("handplotdiv").style.display="";
     plotData(resampleArray(xdata),resampleArray(ydata),resampleArray(xdata),resampleArray(ydata));
     
 }
