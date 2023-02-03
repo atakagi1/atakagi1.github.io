@@ -361,7 +361,9 @@ username_element.addEventListener('input', function(event) {
     document.getElementById("subjectid").innerHTML = subjectDate;
 });
 
-
+// Set speed to 2.5 Hz by default
+var speed_element = document.getElementById("speedselect");
+speed_element.value = "2point5";
 
 // English dictionary
 var lang_en = {
@@ -782,7 +784,6 @@ function start_recording(hand) {
     }
 
     // Play metronome
-    var speed_element = document.getElementById("speedselect");
     switch (speed_element.options[speed_element.selectedIndex].value) {
         case '1':
             audio = new Audio('tick_1hz.mp3');
