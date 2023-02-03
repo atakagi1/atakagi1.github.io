@@ -105,8 +105,8 @@
 </div>
 <!-- Record left and right hand data buttons -->
 <div class="row">
-    <div class="column" style="text-align: center;"><button onclick="download_files('lefthand')" id="lefthandrecordbutton"><span class="spanstyle">Save Left Data</span></button></div>
-    <div class="column" style="text-align: center;"><button onclick="download_files('righthand')" id="righthandrecordbutton"><span class="spanstyle">Save Right Data</span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('lefthand')" id="lefthandrecordbutton"><span id="savelefthanddatatext" class="spanstyle"></span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('righthand')" id="righthandrecordbutton"><span id="savelefthanddatatext" class="spanstyle"></span></button></div>
 </div>
 <br>
 
@@ -117,14 +117,14 @@
 </div>
 <!-- Record left and right foot data buttons -->
 <div class="row">
-    <div class="column" style="text-align: center;"><button onclick="download_files('leftfoot')" id="leftfootrecordbutton"><span class="spanstyle">Save Left Data</span></button></div>
-    <div class="column" style="text-align: center;"><button onclick="download_files('rightfoot')" id="rightfootrecordbutton"><span class="spanstyle">Save Right Data</span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('leftfoot')" id="leftfootrecordbutton"><span id="saveleftfootdatatext" class="spanstyle"></span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('rightfoot')" id="rightfootrecordbutton"><span id="saverightfootdatatext" class="spanstyle"></span></button></div>
 </div>
 
 <!-- Scores: (1-metric)*100 -->
 <div class="row" id="scorediv">
-    <div class="column" style="text-align: center;"><span class="spanstyle">Left Score: </span><br><span id="leftscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
-    <div class="column" style="text-align: center;"><span class="spanstyle">Right Score: </span><br><span id="rightscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
+    <div class="column" style="text-align: center;"><span id="lefthandscoretext" class="spanstyle"></span><br><span id="leftscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
+    <div class="column" style="text-align: center;"><span id="righthandscoretext" class="spanstyle"></span><br><span id="rightscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
 </div>
 
 <!-- Plot raw data -->
@@ -504,6 +504,12 @@ function update_language(language) {
     document.getElementById("edinburghinstructions").innerHTML = lang.edinburghinstructions;
     document.getElementById("forced").innerHTML = lang.forced;
     document.getElementById("browsercheck").innerHTML = lang.browsercheck;
+    document.getElementById("savelefthanddatatext").innerHTML = lang.savelefthanddata;
+    document.getElementById("saverightfootdatatext").innerHTML = lang.saverighthanddata;
+    document.getElementById("saveleftfootdatatext").innerHTML = lang.saveleftfootdata;
+    document.getElementById("saverightfootdatatext").innerHTML = lang.saverightfootdata;
+    document.getElementById("lefthandscoretext").innerHTML = lang.lefthandscore;
+    document.getElementById("righthandscoretext").innerHTML = lang.righthandscore;
 }
 
 var csvlefthand;
