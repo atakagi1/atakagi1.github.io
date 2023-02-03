@@ -696,7 +696,7 @@ function handleMotion(event) {
     if (lefthand_finished&&righthand_finished) {
         document.getElementById("handplotdiv").style.display="";
         // Plot data
-        plotData(resampleArray(lefthand_ax),resampleArray(lefthand_ay),resampleArray(righthand_ax),resampleArray(righthand_ay));
+        plotData("handplotdiv",resampleArray(lefthand_ax),resampleArray(lefthand_ay),resampleArray(righthand_ax),resampleArray(righthand_ay));
 
         // Calculate movement variability metrics
         let LeftHandVariability = hausdorff_distance(lefthand_ax,lefthand_ay,lefthand_az);
@@ -712,7 +712,7 @@ function handleMotion(event) {
     if (leftfoot_finished&&rightfoot_finished) {
         document.getElementById("footplotdiv").style.display="";
         // Plot data
-        plotData(resampleArray(leftfoot_ay),resampleArray(leftfoot_az),resampleArray(rightfoot_ay),resampleArray(rightfoot_az));
+        plotData("footplotdiv",resampleArray(leftfoot_ay),resampleArray(leftfoot_az),resampleArray(rightfoot_ay),resampleArray(rightfoot_az));
 
         // Calculate movement variability metrics
         let LeftFootVariability = hausdorff_distance(leftfoot_ay,leftfoot_az,leftfoot_ax);
@@ -908,7 +908,7 @@ function resampleArray(array) {
 }
 
 // Use plotly to plot raw data
-function plotData(x1,y1,x2,y2) {
+function plotData(plotdiv,x1,y1,x2,y2) {
     var trace1 = {
     x: x1,
     y: y1,
@@ -961,7 +961,7 @@ function plotData(x1,y1,x2,y2) {
         }
     };
 
-    Plotly.newPlot(document.getElementById('plotdiv'), data, layout, {staticPlot: true});
+    Plotly.newPlot(document.getElementById(plotdiv), data, layout, {staticPlot: true});
 }
 
 // Block screen to prevent user interaction during measurement
