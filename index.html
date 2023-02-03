@@ -782,19 +782,26 @@ function start_recording(hand) {
     }
 
     // Play metronome
+    var speed_element = document.getElementById("speedselect");
     switch (speed_element.options[speed_element.selectedIndex].value) {
         case '1':
             audio = new Audio('tick_1hz.mp3');
+            break;
         case '1point5':
             audio = new Audio('tick_1point5hz.mp3');
+            break;
         case '2':
             audio = new Audio('tick_2hz.mp3');
+            break;
         case '2point5':
             audio = new Audio('tick_2point5hz.mp3');
+            break;
         case '3':
             audio = new Audio('tick_3hz.mp3');
+            break;
         default:
             audio = new Audio('tick_2point5hz.mp3');
+            break;
     }
     audio.loop = false;
     audio.play();
