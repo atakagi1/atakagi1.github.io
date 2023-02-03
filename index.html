@@ -311,7 +311,7 @@
     </select></div>
 <br><br>
 <!-- Save Edinburgh button -->
-<div style="text-align: center;"><button onclick="download_files('edinburgh')"><span class="spanstyle">Save Edinburgh</span></button></div>
+<div style="text-align: center;"><button onclick="download_files('edinburgh')"><span id="saveedinburghtext" class="spanstyle"></span></button></div>
 
 </main>
 
@@ -425,7 +425,8 @@ var lang_en = {
     saverightfootdata: "Save Right Foot Data",
     lefthandscore: "Left hand score:",
     leftrightscore: "Right hand score:",
-    speed: "Speed (Hz): "
+    speed: "Speed (Hz): ",
+    saveedinburgh: "Save Questionnaire"
 }
 // Japanese dictionary
 var lang_jp = {
@@ -465,7 +466,8 @@ var lang_jp = {
     saverightfootdata: "右足 データ セーブ",
     lefthandscore: "左手 スコア:",
     leftrightscore: "右手 スコア:",
-    speed: "速度 (Hz): "
+    speed: "速度 (Hz): ",
+    saveedinburgh: "アンケート セーブ"
 }
 
 // Japanese dictionary
@@ -506,7 +508,8 @@ var lang_jphiragana = {
     saverightfootdata: "みぎあし データ セーブ",
     lefthandscore: "ひだりて スコア:",
     leftrightscore: "みぎて スコア:",
-    speed: "はやさ (Hz): "
+    speed: "はやさ (Hz): ",
+    saveedinburgh: "アンケート セーブ"
 }
 
 function update_language(language) {
@@ -558,6 +561,7 @@ function update_language(language) {
     document.getElementById("lefthandscoretext").innerHTML = lang.lefthandscore;
     document.getElementById("righthandscoretext").innerHTML = lang.righthandscore;
     document.getElementById("speedtext").innerHTML = lang.speed;
+    document.getElementById("saveedinburghtext").innerHTML = lang.saveedinburgh;
 }
 
 var csvlefthand;
