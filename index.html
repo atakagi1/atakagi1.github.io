@@ -57,6 +57,8 @@
 <div style="text-align: center;" id="browserwarningdiv"><img height="30" src="warning.jpg"><span class="spanstyle" style="font-weight: bolder; color:red; font-size: 30px;" id="browsercheck"></span></div>
 <br>
 
+<div style="text-align: center;"><span id="subjectid" class="spanstyle"></span></div>
+<br>
 <!-- Skill Examiner logo -->
 <div style="text-align: center;"><img width="200" height="150" src="handed_icon.png"></div>
 <br>
@@ -96,18 +98,29 @@
     <span id="volumewarning" class="spanstyle" style="font-size: 18px; font-weight: bold; color:red"></span>
 </div>
 
-<!-- Start left and right recording image -->
+<!-- Start left and right hand recording image -->
 <div class="row">
-    <div class="column" style="text-align: center;"><input type="image" src="lefthand.png" id="startLeft" name="submit" width="80" height="110" onclick="start_recording('lefthand')"/></div>
-    <div class="column" style="text-align: center;"><input type="image" src="righthand.png" id="startRight" name="submit" width="80" height="110" onclick="start_recording('righthand')"/></div>
+    <div class="column" style="text-align: center;"><input type="image" src="lefthand.png" id="startLefthand" name="submit" width="80" height="110" onclick="start_recording('lefthand')"/></div>
+    <div class="column" style="text-align: center;"><input type="image" src="righthand.png" id="startRighthand" name="submit" width="80" height="110" onclick="start_recording('righthand')"/></div>
 </div>
-
-<!-- Record left and right data buttons -->
+<!-- Record left and right hand data buttons -->
 <div class="row">
-    <div class="column" style="text-align: center;"><button onclick="download_files('lefthand')" id="leftrecordbutton"><span class="spanstyle">Save Left Data</span></button></div>
-    <div class="column" style="text-align: center;"><button onclick="download_files('righthand')" id="rightrecordbutton"><span class="spanstyle">Save Right Data</span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('lefthand')" id="lefthandrecordbutton"><span class="spanstyle">Save Left Data</span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('righthand')" id="righthandrecordbutton"><span class="spanstyle">Save Right Data</span></button></div>
 </div>
 <br>
+
+<!-- Start left and right foot recording image -->
+<div class="row">
+    <div class="column" style="text-align: center;"><input type="image" src="leftfoot.png" id="startLeftfoot" name="submit" width="80" height="110" onclick="start_recording('leftfoot')"/></div>
+    <div class="column" style="text-align: center;"><input type="image" src="rightfoot.png" id="startRightfoot" name="submit" width="80" height="110" onclick="start_recording('rightfoot')"/></div>
+</div>
+<!-- Record left and right foot data buttons -->
+<div class="row">
+    <div class="column" style="text-align: center;"><button onclick="download_files('leftfoot')" id="leftfootrecordbutton"><span class="spanstyle">Save Left Data</span></button></div>
+    <div class="column" style="text-align: center;"><button onclick="download_files('rightfoot')" id="rightfootrecordbutton"><span class="spanstyle">Save Right Data</span></button></div>
+</div>
+
 <!-- Scores: (1-metric)*100 -->
 <div class="row" id="scorediv">
     <div class="column" style="text-align: center;"><span class="spanstyle">Left Score: </span><br><span id="leftscore" class="spanstyle" style="font-weight: bolder; font-size: 28px;"></span></div>
@@ -302,8 +315,10 @@ const RecordTime = 1000;
 var subjectDate = moment().format('YYYYMMDD')+"_"+moment().format('hhmmss')+"_";
 
 // Hide record buttons until data is recorded
-document.getElementById("leftrecordbutton").style.display="none";
-document.getElementById("rightrecordbutton").style.display="none";
+document.getElementById("lefthandrecordbutton").style.display="none";
+document.getElementById("righthandrecordbutton").style.display="none";
+document.getElementById("leftfootrecordbutton").style.display="none";
+document.getElementById("rightfootrecordbutton").style.display="none";
 document.getElementById("plotdiv").style.display="none";
 document.getElementById("scorediv").style.display="none";
 document.getElementById("browserwarningdiv").style.display="none";
@@ -359,7 +374,13 @@ var lang_en = {
     yes: "Yes",
     edinburghinstructions: "Use sliders to select preferred hand",
     forced: "Were you forced to be right-handed:",
-    browsercheck: "Only works with Firefox or Safari"
+    browsercheck: "Only works with Firefox or Safari",
+    savelefthanddata: "Save Left Hand Data",
+    saverighthanddata: "Save Right Hand Data",
+    saveleftfootdata: "Save Left Foot Data",
+    saverightfootdata: "Save Right Foot Data",
+    lefthandscore: "Left hand score:",
+    leftrightscore: "Right hand score:"
 }
 // Japanese dictionary
 var lang_jp = {
@@ -392,7 +413,13 @@ var lang_jp = {
     yes: "はい",
     edinburghinstructions: "使う手をスライダーで選択して下さい",
     forced: "左から右手に矯正された事がある:",
-    browsercheck: "Firefox か Safariのみ対応しております"
+    browsercheck: "Firefox か Safariのみ対応しております",
+    savelefthanddata: "左手 データ セーブ",
+    saverighthanddata: "右手 データ セーブ",
+    saveleftfootdata: "左足 データ セーブ",
+    saverightfootdata: "右足 データ セーブ",
+    lefthandscore: "左手 スコア:",
+    leftrightscore: "右手 スコア:"
 }
 
 // Japanese dictionary
@@ -426,7 +453,13 @@ var lang_jphiragana = {
     yes: "はい",
     edinburghinstructions: "つかうて・あしをえらんでください",
     forced: "おはしをひだりてでもちたかったが、みぎてにもちかえた",
-    browsercheck: "Firefox か Safari をつかってください"
+    browsercheck: "Firefox か Safari をつかってください",
+    savelefthanddata: "ひだりて データ セーブ",
+    saverighthanddata: "みぎて データ セーブ",
+    saveleftfootdata: "ひだりあし データ セーブ",
+    saverightfootdata: "みぎあし データ セーブ",
+    lefthandscore: "ひだりて スコア:",
+    leftrightscore: "みぎて スコア:"
 }
 
 function update_language(language) {
@@ -440,6 +473,7 @@ function update_language(language) {
         lang = lang_jphiragana;
     }
     // Replace all text
+    document.getElementById("subjectid").innerHTML = subjectDate;
     document.getElementById("welcome").innerHTML = lang.welcome;
     document.getElementById("upwards").innerHTML = lang.upwards;
     document.getElementById("outwards").innerHTML = lang.outwards;
@@ -472,23 +506,33 @@ function update_language(language) {
     document.getElementById("browsercheck").innerHTML = lang.browsercheck;
 }
 
-var csvleft;
-var csvright;
+var csvlefthand;
+var csvrighthand;
+var csvleftfoot;
+var csvrightfoot;
 var Counter;
 var time;
 var audio;
-var recordingHand;
+var recordingLimb;
 
 function download_files(file) {  
 
     var temp_link = document.createElement('a');
     if (file=='lefthand'){
-        CSVFile = new Blob([csvleft], {type:"text/csv"});
+        CSVFile = new Blob([csvlefthand], {type:"text/csv"});
         temp_link.download = subjectDate+"lefthand.csv";
     }
     else if (file=='righthand'){
-        CSVFile = new Blob([csvright], {type:"text/csv"});
+        CSVFile = new Blob([csvrighthand], {type:"text/csv"});
         temp_link.download = subjectDate+"righthand.csv";
+    }
+    else if (file=='leftfoot'){
+        CSVFile = new Blob([csvleftfoot], {type:"text/csv"});
+        temp_link.download = subjectDate+"leftfoot.csv";
+    }
+    else if (file=='rightfoot'){
+        CSVFile = new Blob([csvrightfoot], {type:"text/csv"});
+        temp_link.download = subjectDate+"rightfoot.csv";
     }
     else if (file=='edinburgh') {
 
@@ -543,14 +587,22 @@ function updateFieldIfNotNull(fieldName, value, precision=10){
     document.getElementById(fieldName).innerHTML = value.toFixed(precision);
 }
 
-var left_ax = [];
-var left_ay = [];
-var left_az = [];
-var right_ax = [];
-var right_ay = [];
-var right_az = [];
-var left_finished = false;
-var right_finished = false;
+var lefthand_ax = [];
+var lefthand_ay = [];
+var lefthand_az = [];
+var righthand_ax = [];
+var righthand_ay = [];
+var righthand_az = [];
+var leftfoot_ax = [];
+var leftfoot_ay = [];
+var leftfoot_az = [];
+var rightfoot_ax = [];
+var rightfoot_ay = [];
+var rightfoot_az = [];
+var lefthand_finished = false;
+var righthand_finished = false;
+var leftfoot_finished = false;
+var rightfoot_finished = false;
 function handleMotion(event) {
 
   //updateFieldIfNotNull('Accelerometer_x', event.acceleration.x);
@@ -564,27 +616,39 @@ function handleMotion(event) {
     is_running = false;
 
     // Update image to recording done
-    if (recordingHand=='lefthand'){
-        document.getElementById("startLeft").src="lefthand_done.png";
+    if (recordingLimb=='lefthand'){
+        document.getElementById("startLefthand").src="lefthand_done.png";
         // Show record left data button
-        document.getElementById("leftrecordbutton").style.display="";
-        left_finished = true;
+        document.getElementById("lefthandrecordbutton").style.display="";
+        lefthand_finished = true;
     }
-    else if (recordingHand=='righthand'){
-        document.getElementById("startRight").src="righthand_done.png";
+    else if (recordingLimb=='righthand'){
+        document.getElementById("startRighthand").src="righthand_done.png";
         // Show record right data button
-        document.getElementById("rightrecordbutton").style.display="";
-        right_finished = true;
+        document.getElementById("righthandrecordbutton").style.display="";
+        righthand_finished = true;
+    }
+    else if (recordingLimb=='leftfoot'){
+        document.getElementById("startLeftfoot").src="leftfoot_done.png";
+        // Show record right data button
+        document.getElementById("leftfootrecordbutton").style.display="";
+        leftfoot_finished = true;
+    }
+    else if (recordingLimb=='rightfoot'){
+        document.getElementById("startRightfoot").src="rightfoot_done.png";
+        // Show record right data button
+        document.getElementById("rightfootrecordbutton").style.display="";
+        rightfoot_finished = true;
     }
 
-    if (left_finished&&right_finished) {
+    if (lefthand_finished&&righthand_finished) {
         document.getElementById("plotdiv").style.display="";
         // Plot data
-        plotData(resampleArray(left_ax),resampleArray(left_ay),resampleArray(right_ax),resampleArray(right_ay));
+        plotData(resampleArray(lefthand_ax),resampleArray(lefthand_ay),resampleArray(righthand_ax),resampleArray(righthand_ay));
 
         // Calculate movement variability metrics
-        let LeftVariability = hausdorff_distance(left_ax,left_ay,left_az);
-        let RightVariability = hausdorff_distance(right_ax,right_ay,right_az);
+        let LeftVariability = hausdorff_distance(lefthand_ax,lefthand_ay,lefthand_az);
+        let RightVariability = hausdorff_distance(righthand_ax,righthand_ay,righthand_az);
 
         // Show scores
         document.getElementById("scorediv").style.display="";
@@ -603,17 +667,29 @@ function handleMotion(event) {
     // Only record values if nothing is undefined or null
     if (time!=null&&event.acceleration.x!=null&&event.acceleration.y!=null&&event.acceleration.z!=null) {
         // Append to csv file
-        if (recordingHand=='lefthand'){
-            left_ax.push(event.acceleration.x);
-            left_ay.push(event.acceleration.y);
-            left_az.push(event.acceleration.z);
-            csvleft += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+        if (recordingLimb=='lefthand'){
+            lefthand_ax.push(event.acceleration.x);
+            lefthand_ay.push(event.acceleration.y);
+            lefthand_az.push(event.acceleration.z);
+            csvlefthand += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
         }
-        else if (recordingHand=='righthand'){
-            right_ax.push(event.acceleration.x);
-            right_ay.push(event.acceleration.y);
-            right_az.push(event.acceleration.z);
-            csvright += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+        else if (recordingLimb=='righthand'){
+            righthand_ax.push(event.acceleration.x);
+            righthand_ay.push(event.acceleration.y);
+            righthand_az.push(event.acceleration.z);
+            csvrighthand += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+        }
+        else if (recordingLimb=='leftfoot'){
+            leftfoot_ax.push(event.acceleration.x);
+            leftfoot_ay.push(event.acceleration.y);
+            leftfoot_az.push(event.acceleration.z);
+            csvleftfoot += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
+        }
+        else if (recordingLimb=='rightfoot'){
+            rightfoot_ax.push(event.acceleration.x);
+            rightfoot_ay.push(event.acceleration.y);
+            rightfoot_az.push(event.acceleration.z);
+            csvrightfoot += time + "," + event.acceleration.x + "," + event.acceleration.y+"," + event.acceleration.z+"\n";
         }
     }
   }
@@ -637,7 +713,7 @@ function start_recording(hand) {
     }
 
     // Which hand is recording?
-    recordingHand = hand;
+    recordingLimb = hand;
 
     // Store start recording time
     StartTime = Date.now();
@@ -646,17 +722,29 @@ function start_recording(hand) {
     block_screen();
 
     // Clear arrays in case of re-recording
-    if (recordingHand=='lefthand'){
-        left_ax = [];
-        left_ay = [];
-        left_az = [];
-        csvleft = [];
+    if (recordingLimb=='lefthand'){
+        lefthand_ax = [];
+        lefthand_ay = [];
+        lefthand_az = [];
+        csvlefthand = [];
     }
-    else if (recordingHand=='righthand'){
-        right_ax = [];
-        right_ay = [];
-        right_az = [];
-        csvright = [];
+    else if (recordingLimb=='righthand'){
+        righthand_ax = [];
+        righthand_ay = [];
+        righthand_az = [];
+        csvrighthand = [];
+    }
+    else if (recordingLimb=='leftfoot'){
+        leftfoot_ax = [];
+        leftfoot_ay = [];
+        leftfoot_az = [];
+        csvleftfoot = [];
+    }
+    else if (recordingLimb=='rightfoot'){
+        rightfoot_ax = [];
+        rightfoot_ay = [];
+        rightfoot_az = [];
+        csvrightfoot = [];
     }
 
     // Play metronome
@@ -668,18 +756,6 @@ function start_recording(hand) {
     window.addEventListener("devicemotion", handleMotion);
 
 };
-
-/*
-var file = document.getElementById('file');
-file.addEventListener('change', function() {
-    var reader = new FileReader();
-    var f = file.files[0];
-    reader.onload = function(e) {
-        var CSVARRAY = parseResult(e.target.result); //this is where the csv array will be
-    };
-    reader.readAsText(f);    
-});
-*/
 
 // Calculate mean offset of accelerometer data
 function calculateMean(array) {
