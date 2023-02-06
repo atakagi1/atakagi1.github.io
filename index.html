@@ -639,6 +639,7 @@ function updateFieldIfNotNull(fieldName, value, precision=10){
     document.getElementById(fieldName).innerHTML = value.toFixed(precision);
 }
 
+var time_data = [];
 var lefthand_ax = [];
 var lefthand_ay = [];
 var lefthand_az = [];
@@ -700,8 +701,8 @@ function handleMotion(event) {
         plotData("handplotdiv",resampleArray(lefthand_ax),resampleArray(lefthand_ay),resampleArray(righthand_ax),resampleArray(righthand_ay));
 
         // Calculate movement variability metrics
-        let LeftHandVariability = hausdorff_distance(lefthand_ax,lefthand_ay,lefthand_az);
-        let RightHandVariability = hausdorff_distance(righthand_ax,righthand_ay,righthand_az);
+        let LeftHandVariability = hausdorff_distance(time_data,lefthand_ax,lefthand_ay,lefthand_az);
+        let RightHandVariability = hausdorff_distance(time_data,righthand_ax,righthand_ay,righthand_az);
 
         // Show scores
         document.getElementById("handscorediv").style.display="";
@@ -716,8 +717,8 @@ function handleMotion(event) {
         plotData("footplotdiv",resampleArray(leftfoot_ay),resampleArray(leftfoot_az),resampleArray(rightfoot_ay),resampleArray(rightfoot_az));
 
         // Calculate movement variability metrics
-        let LeftFootVariability = hausdorff_distance(leftfoot_ay,leftfoot_az,leftfoot_ax);
-        let RightFootVariability = hausdorff_distance(rightfoot_ay,rightfoot_az,rightfoot_ax);
+        let LeftFootVariability = hausdorff_distance(time_data,leftfoot_ay,leftfoot_az,leftfoot_ax);
+        let RightFootVariability = hausdorff_distance(time_data,rightfoot_ay,rightfoot_az,rightfoot_ax);
 
         // Show scores
         document.getElementById("footscorediv").style.display="";
@@ -735,6 +736,7 @@ function handleMotion(event) {
   if (time>1500){
     // Only record values if nothing is undefined or null
     if (time!=null&&event.acceleration.x!=null&&event.acceleration.y!=null&&event.acceleration.z!=null) {
+        time_data.push(time);
         // Append to csv file
         if (recordingLimb=='lefthand'){
             lefthand_ax.push(event.acceleration.x);
@@ -791,6 +793,7 @@ function start_recording(hand) {
     block_screen();
 
     // Clear arrays in case of re-recording
+    time_data = [];
     if (recordingLimb=='lefthand'){
         lefthand_ax = [];
         lefthand_ay = [];
